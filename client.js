@@ -10,7 +10,7 @@
    */
   exports.render = function () {
     // TODO: fill in render function
-    Dom.div("Welcome to Darkville!");
+    Dom.div('Welcome to Darkville!');
   };
   
   /**
@@ -18,10 +18,13 @@
    */
   exports.renderSettings = function () {
     Dom.div(function () {
+      
+      Dom.p('The following will only be applied to new games. Not the current one.');
+      
       // the setting for the number of werewolves
-      Dom.text("Number of werewolves in the game:");
+      Dom.p('Number of werewolves in the game:');
       Form.input({
-        name: "nWerewolf",
+        name: 'nWerewolf',
         value: 2
       });
     });
