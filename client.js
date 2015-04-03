@@ -27,6 +27,13 @@
         name: 'nWerewolf',
         value: 2
       });
+      
+      // restart button
+      Form.check({
+        name: 'restart',
+        text: 'Start new game!',
+        sub: 'This will destroy the current game and start a new one.'
+      });
     });
   };
   
