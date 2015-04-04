@@ -80,6 +80,11 @@
       var role = userRoles['' + user];
       Db.personal(user).set('role', role);
     });
+    
+    // setting up the time
+    Db.shared.ref('time').set({
+      start: Date.now()
+    });
   }
   
   /**
