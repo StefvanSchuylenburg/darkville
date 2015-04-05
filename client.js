@@ -4,13 +4,46 @@
   // loading dependencies
   var Dom = require('dom');
   var Form = require('form');
+  var Db = require('db');
+  
+  var GameTime = require('GameTime');
   
   /**
    * The main render method
    */
   exports.render = function () {
-    // TODO: fill in render function
-    Dom.div('Welcome to Darkville!');
+    
+    // the current game time
+    var time = GameTime.startingOn(Db.shared.get('time').start);
+    
+    /**
+     * Renders information in the bar on top of the application.
+     * Token from repo Happening/Betrayal
+     */
+    function infoItem(title, content) {
+      Dom.div(function () {
+        Dom.style({textAlign: 'center', Flex: true});
+        Dom.div(function () {
+          Dom.text(title);
+          Dom.style({fontWeight: 'bold'});
+        });
+        content();
+      });
+    }
+    
+    // Render the page
+    Dom.div(function () {
+      
+      // display current time
+      infoItem('time', function () {
+        var now = new Date();
+        var dayNight = time.isDay(now)? 'Day': 'Night';
+        var number = time.getNumber(now);
+        Dom.text(dayNight + ' ' + number);
+      });
+      
+      Dom.text('Welcome to Darkville!');
+    });
   };
   
   /**
