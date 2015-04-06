@@ -15,6 +15,8 @@
     // the start of the night and the day (hard-coded right now)
     var dayStart = 8;
     var nightStart = 20;
+    
+    // the start of day 0 as Date object
     var startDay0 = getStartDay0();
     
     /**
@@ -33,6 +35,29 @@
       
       return startDay0;
     }
+    
+    /**
+     * The start of day n.
+     * Returns a Date.
+     */
+    function getStartDayN(n) {
+      // take the start and add n days to it ;)
+      var startDayN = new Date(startDay0.getTime());
+      startDayN.setDate(startDayN.getDate() + n);
+      
+      return startDayN;
+    }
+    
+    /**
+     * The start of night n.
+     * Returns a Date.
+     */
+    function getStartNightN(n) {
+      var startNightN = getStartDayN(n);
+      startNightN.setHours(nigthStart);
+      return startNightN;
+    }
+    
     
     return {
       /**
@@ -61,6 +86,21 @@
         
         // return the day as whole number
         return Math.floor(days);
+      },
+      /**
+       * Gets the date on which the next change from date to night or vice versa
+       * happens.
+       */
+      getNextChange: function(date) {
+        // the current number
+        var n = this.getNumber(date);
+        if (this.isDay(date)) {
+          // find start of night
+          return getStartNightN(n);
+        } else {
+          // find start of next(!) day
+          return getStartDayN(n + 1);
+        }
       }
       
     };
