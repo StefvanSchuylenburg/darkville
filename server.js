@@ -6,7 +6,15 @@
   var Db = require('db');
   
   var Constants = require('Constants')();
+  var GameTime = requrie('GameTime');
   
+  // variables
+  
+  // the current GameTime (is updated on restart)
+  var time;
+  
+  // timeout used for when the time changes
+  var timeChangeTimeout;
   
   /**
    * + Jonas Raoni Soares Silva
@@ -60,12 +68,54 @@
   }
   
   /**
+   * Closes the previous night and starts the new day.
+   * @param number the current number of the day that just started
+   */
+  function startDay(number) {
+    
+  }
+  
+  /**
+   * Closes the day and starts the night.
+   * @param number the current number of the day
+   */
+  function startNight(number) {
+    
+  }
+  
+  /**
+   * Will be called when the day changes from night to day.
+   * (or when a new game has been started)
+   */
+  function onTimeChanged() {
+    // getting the time
+    var now = new Date();
+    
+    // starting new timer
+    var nextChange = time.getNextChange(now);
+    var delay = nextChange.getTime() - now.getTime();
+    timeChangeTimeout = setTimeout(onTimeChanged, delay);
+    
+    // calling startDay/startNight
+    var number = time.getNumber(now);
+    if (time.isDay(now)) {
+      startDay(number);
+    } else {
+      startNight(number);
+    }
+  }
+  
+  /**
    * Starts a new game with the given configuration.
    * THis will destroy the current game (if there is any).
    */
   function restart(config) {
-    // TODO: destory current game
+    // destroy old game
+    if (timeChangeTimeout) {
+      clearTimeout(timeChangeTimeout);
+    }
     
+    // start new game
     var users = Plugin.userIds();
     
     // the roles to select
@@ -82,9 +132,13 @@
     });
     
     // setting up the time
+    var now = Date.now();
     Db.shared.ref('time').set({
-      start: Date.now()
     });
+    
+    // starting the timer and init the game time
+    time = GameTime.startingOn(now);
+    onTimeChanged();
   }
   
   /**
