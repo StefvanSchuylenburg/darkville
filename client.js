@@ -5,8 +5,11 @@
   var Dom = require('dom');
   var Form = require('form');
   var Db = require('db');
+  var Ui = require('ui');
+  var Plugin = require('plugin');
   
   var GameTime = require('GameTime');
+  var RoleViews = require('RoleViews');
   
   /**
    * The main render method
@@ -43,6 +46,9 @@
       });
       
       Dom.text('Welcome to Darkville!');
+      
+      // display the role
+      RoleViews.description(Db.personal.get('role'));
     });
   };
   
