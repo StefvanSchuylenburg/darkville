@@ -54,7 +54,7 @@
      */
     function getStartNightN(n) {
       var startNightN = getStartDayN(n);
-      startNightN.setHours(nigthStart);
+      startNightN.setHours(nightStart);
       return startNightN;
     }
     

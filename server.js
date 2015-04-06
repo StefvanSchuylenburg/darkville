@@ -4,17 +4,15 @@
   // loading dependencies
   var Plugin = require('plugin');
   var Db = require('db');
+  var Timer = require('timer');
   
   var Constants = require('Constants')();
-  var GameTime = requrie('GameTime');
+  var GameTime = require('GameTime');
   
   // variables
   
   // the current GameTime (is updated on restart)
   var time;
-  
-  // timeout used for when the time changes
-  var timeChangeTimeout;
   
   /**
    * + Jonas Raoni Soares Silva
@@ -94,7 +92,8 @@
     // starting new timer
     var nextChange = time.getNextChange(now);
     var delay = nextChange.getTime() - now.getTime();
-    timeChangeTimeout = setTimeout(onTimeChanged, delay);
+    Timer.cancel('onTimeChanged');
+    Timer.set(delay, 'onTimeChanged');
     
     // calling startDay/startNight
     var number = time.getNumber(now);
@@ -111,9 +110,7 @@
    */
   function restart(config) {
     // destroy old game
-    if (timeChangeTimeout) {
-      clearTimeout(timeChangeTimeout);
-    }
+    Timer.cancel('onTimeChanged');
     
     // start new game
     var users = Plugin.userIds();
@@ -134,6 +131,7 @@
     // setting up the time
     var now = Date.now();
     Db.shared.ref('time').set({
+      start: now
     });
     
     // starting the timer and init the game time
@@ -156,5 +154,7 @@
       restart(config);
     }
   };
+  
+  exports.onTimeChanged = onTimeChanged;
   
 }());
