@@ -192,11 +192,22 @@
   /* The rpc calls */
   
   /**
-   * Lets the sending user vote.
-   *
+   * Votes at the voting for the given user.
+   * @param votingId the id of the voting you want to vote on
+   * @param vote the user to vote for
    */
-  exports.vote = function (votingId, user) {
+  exports.client_vote = function (votingId, vote) {
+    // the user that is trying to vote
+    var currentUser = Plugin.userId();
     
+    // verify whether the user is allowed to vote for this
+    var voting = Db.shared.ref('votings').get(votingId);
+    if (voting.hasOwnProperty(currentUser)) {
+      // the current user is allowed to vote
+      
+      // and voting!
+      Db.shared.ref('votings').set(votingId, currentUser, vote);
+    }
   };
   
 }());
