@@ -66,11 +66,33 @@
   }
   
   /**
+   * Gets all the users with the given role.
+   */
+  function usersWithRole(role) {
+    var users = Plugin.userIds();
+    return users.filter(function (user) {
+      return Db.personal(user).get('role') === role;
+    });
+  }
+  
+  /**
+   * Creates a new voting with the given votingId.
+   * For this voting there is an entry prepared for users
+   */
+  function createVoting(votingId, users) {
+    users.forEach(function (user) {
+      Db.shared.ref('votings').set(votingId, user, null);
+    });
+  }
+  
+  /**
    * Closes the previous night and starts the new day.
    * @param number the current number of the day that just started
    */
   function startDay(number) {
-    
+    // start a new vote
+    var votingId = 'day' + number;
+    createVoting(votingId, Plugin.userIds());
   }
   
   /**
@@ -78,7 +100,10 @@
    * @param number the current number of the day
    */
   function startNight(number) {
-    
+    // start a new vote
+    var votingId = 'night' + number;
+    var werewolves = usersWithRole(Constants.roles.WEREWOLF);
+    createVoting(votingId, Plugin.userIds());
   }
   
   /**
@@ -114,6 +139,13 @@
     
     // start new game
     var users = Plugin.userIds();
+    
+    // saving each player in the players list
+    users.forEach(function (user) {
+      Db.shared.ref('users').set('' + user, {
+        isAlive: true
+      });
+    });
     
     // the roles to select
     var selectRoles = {};
@@ -156,5 +188,15 @@
   };
   
   exports.onTimeChanged = onTimeChanged;
+  
+  /* The rpc calls */
+  
+  /**
+   * Lets the sending user vote.
+   *
+   */
+  exports.vote = function (votingId, user) {
+    
+  };
   
 }());
