@@ -12,7 +12,6 @@
   // variables
   
   // the current GameTime (is updated on restart)
-  var time;
   
   /**
    * + Jonas Raoni Soares Silva
@@ -103,7 +102,7 @@
     // start a new vote
     var votingId = 'night' + number;
     var werewolves = usersWithRole(Constants.roles.WEREWOLF);
-    createVoting(votingId, Plugin.userIds());
+    createVoting(votingId, werewolves);
   }
   
   /**
