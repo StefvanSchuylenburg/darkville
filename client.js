@@ -10,6 +10,7 @@
   
   var GameTime = require('GameTime');
   var RoleViews = require('RoleViews');
+  var VotingViews = require('VotingViews');
   
   /**
    * The main render method
@@ -46,6 +47,9 @@
       });
       
       Dom.text('Welcome to Darkville!');
+      
+      // TODO: just for testing atm
+      VotingViews.lynching(time);
       
       // display the role
       RoleViews.description(Db.personal.get('role'));

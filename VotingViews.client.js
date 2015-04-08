@@ -121,4 +121,70 @@
   }
   
   
+  /**
+   * A small wrapper used for the lynching and werewolf voting view.
+   * At the moment only adds some minor css
+   */
+  function voteView(header, content) {
+    Dom.div(function () {
+      Dom.style({
+        border: '3px solid ' + Plugin.colors().highlight,
+        display: 'block',
+        padding: '1em',
+        margin: '1em'
+      });
+      
+      // the header
+      Dom.h3(function () {
+        Dom.style({
+          color: Plugin.colors().highlight
+        });
+        Dom.text(header);
+      });
+      
+      content();
+    });
+  }
+  
+  /**
+   * A view for the voting involved for the lynching.
+   * @param time the game time used for this game.
+   */
+  function lynching(time) {
+    var now = new Date();
+    var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
+    // the id of the the current voting or the previous one
+    var votingId = 'day' + time.getNumber(now);
+    
+    voteView('Lynching', function () {
+      Dom.p(
+        'During the day you can vote here. ' +
+        'Who gets the the most votes will be killed. ' +
+        'Use this voting to kill the werewolves during the day. '
+      );
+      
+      // can we vote?
+      if (time.isDay(now) && isAlive) {
+        // we can vote
+        voteButton(votingId);
+      } else {
+        // we can not vote
+        
+        // show message why
+        Dom.p(function () {
+          Dom.style({color: 'red'});
+          
+          if (!isAlive) Dom.text('You are dead; you can no longer vote!');
+          else if (!time.isDay(now)) Dom.text('You can only vote during the day.');
+        });
+      }
+      
+      // TODO: show who you have voted for
+        
+    });
+  }
+  
+  exports.lynching = lynching;
+  
+  
 }());

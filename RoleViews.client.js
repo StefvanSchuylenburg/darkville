@@ -22,7 +22,8 @@
       Dom.style({
         border: '3px solid ' + color,
         display: 'block',
-        padding: '5px'
+        padding: '1em',
+        margin: '1em'
       });
       
       // the header
