@@ -109,5 +109,16 @@
     Ui.button('Vote', voteModal.bind(this, users, selectedObs, vote));
   }
   
+  /**
+   * A button that looks like a vote button, but which is disabled.
+   */
+  function disabledVoteButton() {
+    Dom.div(function () {
+      Dom.style({'background-color': '#A88698'});
+      Dom.cls('button');
+      Dom.text('Vote');
+    });
+  }
+  
   
 }());
