@@ -12,6 +12,7 @@
   // variables
   
   // the current GameTime (is updated on restart)
+  var time = GameTime.startingOn(Db.shared.get('time', 'start'));
   
   /**
    * + Jonas Raoni Soares Silva
@@ -80,7 +81,7 @@
    */
   function createVoting(votingId, users) {
     users.forEach(function (user) {
-      Db.shared.ref('votings').set(votingId, user, null);
+      Db.shared.ref('votings').set(votingId, user, 0);
     });
   }
   
@@ -116,7 +117,6 @@
     // starting new timer
     var nextChange = time.getNextChange(now);
     var delay = nextChange.getTime() - now.getTime();
-    Timer.cancel('onTimeChanged');
     Timer.set(delay, 'onTimeChanged');
     
     // calling startDay/startNight
