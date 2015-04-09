@@ -46,8 +46,6 @@
         Dom.text(dayNight + ' ' + number);
       });
       
-      Dom.text('Welcome to Darkville!');
-      
       // TODO: just for testing atm
       VotingViews.lynching(time);
       

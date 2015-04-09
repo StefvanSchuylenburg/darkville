@@ -106,7 +106,7 @@
     var users = livingUsers();
     
     // the button
-    Ui.button('Vote', voteModal.bind(this, users, selectedObs, vote));
+    Ui.bigButton('Vote', voteModal.bind(this, users, selectedObs, vote));
   }
   
   /**
@@ -115,7 +115,7 @@
   function disabledVoteButton() {
     Dom.div(function () {
       Dom.style({'background-color': '#A88698'});
-      Dom.cls('button');
+      Dom.cls('big-button');
       Dom.text('Vote');
     });
   }
@@ -128,19 +128,14 @@
   function voteView(header, content) {
     Dom.div(function () {
       Dom.style({
-        border: '3px solid ' + Plugin.colors().highlight,
+        'background-color': 'white',
+        'box-shadow': '0 2px rgba(0,0,0,.1)',
         display: 'block',
-        padding: '1em',
-        margin: '1em'
+        padding: '1em'
       });
       
       // the header
-      Dom.h3(function () {
-        Dom.style({
-          color: Plugin.colors().highlight
-        });
-        Dom.text(header);
-      });
+      Dom.h3(header);
       
       content();
     });
@@ -177,6 +172,9 @@
           if (!isAlive) Dom.text('You are dead; you can no longer vote!');
           else if (!time.isDay(now)) Dom.text('You can only vote during the day.');
         });
+        
+        // disabled button
+        disabledVoteButton();
       }
       
       // TODO: show who you have voted for
