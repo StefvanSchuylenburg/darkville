@@ -6,6 +6,10 @@
   var Dom = require('dom');
   var Plugin = require('plugin');
   var Constants = require('Constants')();
+  var Db = require('db');
+  
+  var GameTime = require('GameTime');
+  var VotingViews = require('VotingViews');
   
   /**
    * Gives a description of a role.
@@ -43,13 +47,14 @@
       
       // the content
       Dom.div(function () {
-        // Dom.style({float: 'left'});
         content();
       });
     });
   }
   
   function werewolf() {
+    var time = GameTime.startingOn(Db.shared.get('time', 'start'));
+    
     description('Werewolf', 'wolf.png', function () {
       Dom.div(function () {
         Dom.p(
@@ -61,6 +66,9 @@
           'You win when there are only werewolves left in the village.'
         );
       });
+      
+      // show the voting for werewolves
+      VotingViews.werewolves(time);
     });
   }
   

@@ -126,7 +126,7 @@
    * A small wrapper used for the lynching and werewolf voting view.
    * At the moment only adds some minor css
    */
-  function voteView(header, content) {
+  function voteView(content) {
     Dom.div(function () {
       Dom.style({
         'background-color': 'white',
@@ -136,9 +136,28 @@
       });
       
       // the header
-      Dom.h3(header);
+      Dom.h3('Voting');
       
       content();
+    });
+  }
+  
+  /**
+   * Creates a link to an overview
+   */
+  function overviewLink(votingId) {
+    Dom.div(function () {
+      Dom.style({
+        color: Plugin.colors().highlight,
+        'text-align': 'right'
+      });
+      
+      // on click to the right page
+      Dom.on('click', function () {
+        Page.nav(['voting', votingId]);
+      });
+      
+      Dom.text('View votes');
     });
   }
   
@@ -152,7 +171,7 @@
     // the id of the the current voting or the previous one
     var votingId = 'day' + time.getNumber(now);
     
-    voteView('Lynching', function () {
+    voteView(function () {
       Dom.p(
         'During the day you can vote here. ' +
         'Who gets the the most votes will be killed. ' +
@@ -179,23 +198,37 @@
       }
       
       // link to the vote overview
-      Dom.div(function () {
-        Dom.style({
-          color: Plugin.colors().highlight,
-          'text-align': 'right'
-        });
-        
-        // on click to the right page
-        Dom.on('click', function () {
-          Page.nav(['voting', votingId]);
-        });
-        
-        Dom.i(function () {
-          Dom.cls('fa fa-angle-double-right');
-        });
-        Dom.text('View votes');
-      });
+      overviewLink(votingId);
+    });
+  }
+  
+  /**
+   * A view for the voting done by the werewolves.
+   */
+  function werewolves(time) {
+    // TODO: still a lot is a duplicate of lynching, require clean-up
+    var now = new Date();
+    var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
+    // the id of the the current voting or the previous one
+    var votingId = 'night' + (time.getNumber(now) - time.isDay(now)? 1 : 0);
     
+    voteView(function() {
+      Dom.p(
+        'Vote here to kill the stupid citizens. '
+      );
+      if (time.isNight(now) && isAlive) { // we can vote
+        voteButton(votingId);
+      } else { // we can not vote
+        // show message why
+        Dom.p(function () {
+          Dom.style({color: 'red'});
+          if (!isAlive) Dom.text('You are dead; you can no longer vote!');
+          else if (!time.isNight(now)) Dom.text('You can only vote during the night');
+        });
+        disabledVoteButton();
+      }
+      
+      overviewLink(votingId);
     });
   }
   
@@ -282,6 +315,7 @@
   
   
   exports.lynching = lynching;
+  exports.werewolves = werewolves;
   
   exports.overview = overview;
   
