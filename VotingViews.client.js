@@ -11,6 +11,7 @@
   var Db = require('db');
   var Server = require('server');
   var Obs = require('obs');
+  var Page = require('page');
   
   /**
    * A pop-up like menu to choose a user to vote on.
@@ -177,12 +178,111 @@
         disabledVoteButton();
       }
       
-      // TODO: show who you have voted for
+      // link to the vote overview
+      Dom.div(function () {
+        Dom.style({
+          color: Plugin.colors().highlight,
+          'text-align': 'right'
+        });
         
+        // on click to the right page
+        Dom.on('click', function () {
+          Page.nav(['voting', votingId]);
+        });
+        
+        Dom.i(function () {
+          Dom.cls('fa fa-angle-double-right');
+        });
+        Dom.text('View votes');
+      });
+    
     });
   }
   
+  /**
+   * Shows the name of the user
+   */
+  function userName(user) {
+    Dom.h2(function () {
+      Dom.style({
+        borderBottomStyle: 'none',
+        textTransform: 'initial',
+        margin: '4px'
+      });
+      
+      Dom.text(Plugin.userName(user));
+    });
+  }
+  
+  /**
+   * Shows where the given user voted for.
+   * The html object will be a <tr> element
+   * (Will do nothing if the user does not participate in the voting.)
+   * @param voting the voting object as stored in the database
+   * @param user the user who has voted
+   */
+  function voteEntry(voting, user) {
+    if (voting.hasOwnProperty(user)) { // the user has a vote entry
+      var vote = voting[user];
+      var userId = parseInt(user, 10);
+      
+      // the dom element
+      Ui.item(function () {
+        
+        // the user
+        Ui.avatar(Plugin.userAvatar(userId));
+        userName(userId);
+        
+        // check whether he has voted
+        if (vote) {
+          // small message saying he has voted
+          Dom.div(function () {
+            Dom.style({
+              margin: '1em',
+              color: '#AAA'
+            });
+            Dom.text('has voted for');
+          });
+          
+          // the player voted on
+          userName(vote);
+          Ui.avatar(Plugin.userAvatar(vote));
+        } else {
+          // small message saying he has not voted yet
+          Dom.div(function () {
+            Dom.style({
+              margin: '1em',
+              color: '#AAA'
+            });
+            Dom.text(' has not voted yet ');
+          });
+        }
+      });
+    }
+  }
+  
+  /**
+   * Gives an overview for a voting.
+   * An overview contains a list of who votes for who.
+   */
+  function overview(votingId) {
+    var voting = Db.shared.get('votings', votingId);
+    var voters = Object.keys(voting);
+    
+    Dom.style({marginTop: '20px'});
+    
+    // construct a table where each vote is shown
+    Ui.list(function () {
+      // show an entry for each of the voters
+      voters.forEach(function (voter) {
+        voteEntry(voting, voter);
+      });
+    });
+  }
+  
+  
   exports.lynching = lynching;
   
+  exports.overview = overview;
   
 }());

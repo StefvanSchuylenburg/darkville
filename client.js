@@ -5,17 +5,16 @@
   var Dom = require('dom');
   var Form = require('form');
   var Db = require('db');
-  var Ui = require('ui');
-  var Plugin = require('plugin');
+  var Page = require('page');
   
   var GameTime = require('GameTime');
   var RoleViews = require('RoleViews');
   var VotingViews = require('VotingViews');
   
   /**
-   * The main render method
+   * Renders the home screen for each user
    */
-  exports.render = function () {
+  function renderHome() {
     
     // the current game time
     var time = GameTime.startingOn(Db.shared.get('time').start);
@@ -46,12 +45,29 @@
         Dom.text(dayNight + ' ' + number);
       });
       
-      // TODO: just for testing atm
       VotingViews.lynching(time);
       
       // display the role
       RoleViews.description(Db.personal.get('role'));
     });
+  }
+  
+  /**
+   * The main render method
+   */
+  exports.render = function () {
+    
+    // render a page based on the state
+    if (Page.state.get(0) === 'voting') {
+      // render an overview for a voting
+      // TODO: hide the voting the nights for non-werewolves
+      var votingId = Page.state.get(1);
+      
+      VotingViews.overview(votingId);
+    } else {
+      // no special page: render home page
+      renderHome();
+    }
   };
   
   /**
