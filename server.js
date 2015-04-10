@@ -80,7 +80,7 @@
    * The user is no longer alive and his role will be exposed.
    */
   function kill(user) {
-    Db.shared.users.set(user, {
+    Db.shared.set('users', user, {
       isAlive: false,
       role: Db.personal(user).role
     });
@@ -117,7 +117,7 @@
     var max = Math.max.apply(null, values);
     
     // get the users that have the max number of votes
-    var maxUsers = votes.filter(function (user) {
+    var maxUsers = Object.keys(voting).filter(function (user) {
       return votes[user] === max;
     });
     
