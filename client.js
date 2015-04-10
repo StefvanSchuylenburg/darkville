@@ -6,10 +6,12 @@
   var Form = require('form');
   var Db = require('db');
   var Page = require('page');
+  var Ui = require('ui');
   
   var GameTime = require('GameTime');
   var RoleViews = require('RoleViews');
   var VotingViews = require('VotingViews');
+  var CitizenViews = require('CitizenViews');
   
   /**
    * Renders the home screen for each user
@@ -47,6 +49,15 @@
       
       VotingViews.lynching(time);
       
+      // button to go to the overview of the citizens
+      Ui.bigButton(function () {
+        Dom.text('List of citizens');
+        Dom.on('click', function () {
+          // go to citizen overview
+          Page.nav(['citizens']);
+        });
+      });
+      
       // display the role
       RoleViews.description(Db.personal.get('role'));
     });
@@ -64,6 +75,9 @@
       var votingId = Page.state.get(1);
       
       VotingViews.overview(votingId);
+    } else if (Page.state.get(0) === 'citizens') {
+      // render citizen overview
+      CitizenViews.overview();
     } else {
       // no special page: render home page
       renderHome();
