@@ -76,6 +76,57 @@
   }
   
   /**
+   * Kills the given user.
+   * The user is no longer alive and his role will be exposed.
+   */
+  function kill(user) {
+    Db.shared.users.set(user, {
+      isAlive: false,
+      role: Db.personal(user).role
+    });
+  }
+  
+  /**
+   * Gets the player who has the most votes in the voting with the given id.
+   * If multiple players have the same number of votes, then one will be picked
+   * randomly.
+   */
+  function mostVotes(votingId) {
+    var voting = Db.shared.get('votings', votingId);
+    
+    // count the votes for each player
+    var votes = {};
+    
+    // counting the votes
+    for (var user in voting) {
+      if (voting.hasOwnProperty(user)) {
+        var voteFor = '' + voting[user];
+        
+        if (votes[voteFor]) { // votes[voteFor] is defined (and atleast 1)
+          votes[voteFor]++;
+        } else { // not yet defined
+          votes[voteFor] = 1;
+        }
+      }
+    }
+    
+    // get the max number of votes
+    var values = Object.keys(votes).map(function (user) {
+      return votes[user];
+    });
+    var max = Math.max.apply(null, values);
+    
+    // get the users that have the max number of votes
+    var maxUsers = votes.filter(function (user) {
+      return votes[user] === max;
+    });
+    
+    // take on randomly from the maxUsers
+    var r = Math.floor(Math.random() * maxUsers.length);
+    return maxUsers[r];
+  }
+  
+  /**
    * Creates a new voting with the given votingId.
    * For this voting there is an entry prepared for users
    */
@@ -90,9 +141,18 @@
    * @param number the current number of the day that just started
    */
   function startDay(number) {
-    // start a new vote
-    var votingId = 'day' + number;
-    createVoting(votingId, Plugin.userIds());
+    if (number === 0) { // no voting on day 0
+      // TODO: send some message about first day and welcome and stuff
+    } else {
+      // kill the player voted for by the werewolves
+      var target = mostVotes('night' + (number - 1));
+      kill(target);
+      
+      // start a new vote
+      var votingId = 'day' + number;
+      createVoting(votingId, Plugin.userIds());
+    }
+    
   }
   
   /**
@@ -100,6 +160,12 @@
    * @param number the current number of the day
    */
   function startNight(number) {
+    if (number > 0) { // if there was a day before, then finish the lynching
+      // kill the player voted for
+      var target = mostVotes('day' + number);
+      kill(target);
+    }
+    
     // start a new vote
     var votingId = 'night' + number;
     var werewolves = usersWithRole(Constants.roles.WEREWOLF);
