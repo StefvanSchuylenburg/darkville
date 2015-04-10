@@ -169,7 +169,8 @@
     var now = new Date();
     var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
     // the id of the the current voting or the previous one
-    var votingId = 'day' + time.getNumber(now);
+    var number = time.getNumber(now);
+    var votingId = 'day' + number;
     
     voteView(function () {
       Dom.p(
@@ -198,7 +199,9 @@
       }
       
       // link to the vote overview
-      overviewLink(votingId);
+      if (number > 0) { // when there is a voting
+        overviewLink(votingId);
+      }
     });
   }
   
@@ -210,7 +213,8 @@
     var now = new Date();
     var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
     // the id of the the current voting or the previous one
-    var votingId = 'night' + (time.getNumber(now) - time.isDay(now)? 1 : 0);
+    var number = time.getNumber(now);
+    var votingId = 'night' + (number - time.isDay(now)? 1 : 0);
     
     voteView(function() {
       Dom.p(
@@ -228,7 +232,10 @@
         disabledVoteButton();
       }
       
-      overviewLink(votingId);
+      // link to vote overview
+      if (number > 0 || time.isNight(now)) { // the first voting has started
+        overviewLink(votingId);
+      }
     });
   }
   
