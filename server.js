@@ -82,7 +82,7 @@
   function kill(user) {
     Db.shared.set('users', user, {
       isAlive: false,
-      role: Db.personal(user).role
+      role: Db.personal(user).get('role')
     });
   }
   
