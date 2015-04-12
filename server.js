@@ -66,6 +66,14 @@
   }
   
   /**
+   * Determines whether the given user is alive.
+   * This is used in filters to find the correct users
+   */
+  function isAlive(user) {
+    return Db.shared.get('users', user, 'isAlive');
+  }
+  
+  /**
    * Gets all the users with the given role.
    */
   function usersWithRole(role) {
@@ -155,7 +163,8 @@
       
       // start a new vote
       var votingId = 'day' + number;
-      createVoting(votingId, Plugin.userIds());
+      var users = Plugin.userIds().filter(isAlive);
+      createVoting(votingId, users);
     }
     
   }
@@ -174,7 +183,7 @@
     // start a new vote
     var votingId = 'night' + number;
     var werewolves = usersWithRole(Constants.roles.WEREWOLF);
-    createVoting(votingId, werewolves);
+    createVoting(votingId, werewolves.filter(isAlive));
   }
   
   /**
