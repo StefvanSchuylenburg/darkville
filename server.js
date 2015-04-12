@@ -90,6 +90,7 @@
    * Gets the player who has the most votes in the voting with the given id.
    * If multiple players have the same number of votes, then one will be picked
    * randomly.
+   * Returns null when no one has voted.
    */
   function mostVotes(votingId) {
     var voting = Db.shared.get('votings', votingId);
@@ -116,14 +117,18 @@
     });
     var max = Math.max.apply(null, values);
     
-    // get the users that have the max number of votes
-    var maxUsers = Object.keys(voting).filter(function (user) {
-      return votes[user] === max;
-    });
-    
-    // take on randomly from the maxUsers
-    var r = Math.floor(Math.random() * maxUsers.length);
-    return maxUsers[r];
+    if (max) { // there has been voted
+      // get the users that have the max number of votes
+      var maxUsers = Object.keys(voting).filter(function (user) {
+        return votes[user] === max;
+      });
+      
+      // take on randomly from the maxUsers
+      var r = Math.floor(Math.random() * maxUsers.length);
+      return maxUsers[r];
+    } else { // no one has voted
+      return null;
+    }
   }
   
   /**
@@ -146,7 +151,7 @@
     } else {
       // kill the player voted for by the werewolves
       var target = mostVotes('night' + (number - 1));
-      kill(target);
+      if (target) kill(target);
       
       // start a new vote
       var votingId = 'day' + number;
@@ -161,9 +166,9 @@
    */
   function startNight(number) {
     if (number > 0) { // if there was a day before, then finish the lynching
-      // kill the player voted for
+      // kill the player voted for (if there has been voted)
       var target = mostVotes('day' + number);
-      kill(target);
+      if (target) kill(target);
     }
     
     // start a new vote
