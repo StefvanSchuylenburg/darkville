@@ -180,7 +180,7 @@
       );
       
       // can we vote?
-      if (time.isDay(now) && isAlive) {
+      if (time.isDay(now) && isAlive && number > 0) {
         // we can vote
         voteButton(votingId);
       } else {
@@ -192,6 +192,7 @@
           
           if (!isAlive) Dom.text('You are dead; you can no longer vote!');
           else if (!time.isDay(now)) Dom.text('You can only vote during the day.');
+          else if (number > 0) Dom.text('There is no voting on the first day.');
         });
         
         // disabled button
