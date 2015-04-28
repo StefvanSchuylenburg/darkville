@@ -76,7 +76,7 @@
    */
   function livingUsers() {
     // an object containing the users, with their id as key
-    var users = Db.shared.ref('users').get();
+    var users = Db.shared.get('users');
     
     // the users that are alive
     var alive = Object.keys(users).filter(function (user) {

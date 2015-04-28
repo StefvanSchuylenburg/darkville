@@ -159,7 +159,7 @@
    */
   function createVoting(votingId, users) {
     users.forEach(function (user) {
-      Db.shared.ref('votings').set(votingId, user, 0);
+      Db.shared.set('votings', votingId, user, 0);
     });
   }
   
@@ -246,7 +246,7 @@
     
     // saving each player in the players list
     users.forEach(function (user) {
-      Db.shared.ref('users').set('' + user, {
+      Db.shared.set('users', '' + user, {
         isAlive: true
       });
     });
@@ -307,12 +307,12 @@
     var currentUser = Plugin.userId();
     
     // verify whether the user is allowed to vote for this
-    var voting = Db.shared.ref('votings').get(votingId);
+    var voting = Db.shared.get('votings', votingId);
     if (voting.hasOwnProperty(currentUser)) {
       // the current user is allowed to vote
       
       // and voting!
-      Db.shared.ref('votings').set(votingId, currentUser, vote);
+      Db.shared.set('votings', votingId, currentUser, vote);
     }
   };
   
