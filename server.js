@@ -24,6 +24,18 @@
   }
   
   /**
+   * Clears the dabatase by setting all values to 0
+   */
+  function dbClear() {
+    // reset the shared values
+    Db.shared.set(null);
+    // reset the personal values (for all the current users)
+    Plugin.userIds().forEach(function (user) {
+      Db.personal(user).set(null);
+    });
+  }
+  
+  /**
    * Creates a mapping of the userids to a role.
    * @param roles an object containing what roles should be added.
    *            each key should represent a role and the value how many of those
@@ -227,6 +239,7 @@
   function restart(config) {
     // destroy old game
     Timer.cancel('onTimeChanged');
+    dbClear();
     
     // start new game
     var users = Plugin.userIds();
@@ -253,13 +266,15 @@
     
     // setting up the time
     var now = Date.now();
-    Db.shared.ref('time').set({
+    Db.shared.set('time', {
       start: now
     });
     
     // starting the timer and init the game time
     time = GameTime.startingOn(now);
     onTimeChanged();
+    
+    log('The game has been restarted');
   }
   
   /**
