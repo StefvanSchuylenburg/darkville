@@ -109,12 +109,14 @@
     // counting the votes
     for (var user in voting) {
       if (voting.hasOwnProperty(user)) {
-        var voteFor = '' + voting[user];
+        var voteFor = voting[user];
         
-        if (votes[voteFor]) { // votes[voteFor] is defined (and atleast 1)
-          votes[voteFor]++;
-        } else { // not yet defined
-          votes[voteFor] = 1;
+        if (voteFor) { // user has voted for someone
+          if (votes[voteFor]) { // votes[voteFor] is defined (and atleast 1)
+            votes['' + voteFor]++;
+          } else { // not yet defined
+            votes['' + voteFor] = 1;
+          }
         }
       }
     }
@@ -154,12 +156,17 @@
    * @param number the current number of the day that just started
    */
   function startDay(number) {
+    // message about the start of the day
+    log('Starting day ', number);
+    
     if (number === 0) { // no voting on day 0
       // TODO: send some message about first day and welcome and stuff
     } else {
       // kill the player voted for by the werewolves
       var target = mostVotes('night' + (number - 1));
-      if (target) kill(target);
+      if (target) {
+        kill(target);
+      }
       
       // start a new vote
       var votingId = 'day' + number;
@@ -174,10 +181,15 @@
    * @param number the current number of the day
    */
   function startNight(number) {
+    // message about start of the night
+    log('Starting night ', number);
+    
     if (number > 0) { // if there was a day before, then finish the lynching
       // kill the player voted for (if there has been voted)
       var target = mostVotes('day' + number);
-      if (target) kill(target);
+      if (target) {
+        kill(target);
+      }
     }
     
     // start a new vote
