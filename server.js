@@ -213,22 +213,33 @@
   /**
    * Will be called when the day changes from night to day.
    * (or when a new game has been started)
+   * @param the game time it was the last time this function was called
    */
-  function onTimeChanged() {
+  function onTimeChanged(lastTime) {
     // getting the time
     var now = new Date();
     
     // starting new timer
     var nextChange = time.getNextChange(now);
     var delay = nextChange.getTime() - now.getTime();
-    Timer.set(delay, 'onTimeChanged');
     
-    // calling startDay/startNight
-    var number = time.getNumber(now);
-    if (time.isDay(now)) {
-      startDay(number);
-    } else {
-      startNight(number);
+    // get the current time
+    var currentMoment = {
+      isDay: time.isDay(now),
+      number: time.getNumber(now)
+    };
+    
+    Timer.set(delay, 'onTimeChanged', currentMoment);
+    
+    // calling startDay/startNight (only when the time is different)
+    if (!lastTime || lastTime.isDay != currentMoment.isDay || lastTime.number != currentMoment.number) {
+      // the time has changed
+      // anounce the start of the day/night
+      if (currentMoment.isDay) {
+        startDay(currentMoment.number);
+      } else {
+        startNight(currentMoment.number);
+      }
     }
   }
   
@@ -272,7 +283,11 @@
     
     // starting the timer and init the game time
     time = GameTime.startingOn(now);
-    onTimeChanged();
+    var currentMoment = {
+      isDay: time.isDay(now),
+      number: time.getNumber(now)
+    };
+    onTimeChanged(currentMoment);
     
     log('The game has been restarted');
   }
