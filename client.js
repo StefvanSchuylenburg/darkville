@@ -74,7 +74,12 @@
       // TODO: hide the voting the nights for non-werewolves
       var votingId = Page.state.get(1);
       
-      VotingViews.overview(votingId);
+      if (votingId) { // there is a voting id
+        VotingViews.overview(votingId);
+      } else {
+        // otherwise just go back to the home menu
+        Page.nav([]);
+      }
     } else if (Page.state.get(0) === 'citizens') {
       // render citizen overview
       CitizenViews.overview();
