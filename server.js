@@ -232,7 +232,7 @@
     Timer.set(delay, 'onTimeChanged', currentMoment);
     
     // calling startDay/startNight (only when the time is different)
-    if (!lastTime || lastTime.isDay != currentMoment.isDay || lastTime.number != currentMoment.number) {
+    if (lastTime.isDay != currentMoment.isDay || lastTime.number != currentMoment.number) {
       // the time has changed
       // anounce the start of the day/night
       if (currentMoment.isDay) {
@@ -283,9 +283,11 @@
     
     // starting the timer and init the game time
     time = GameTime.startingOn(now);
+  
+    var date = new Date();
     var currentMoment = {
-      isDay: time.isDay(now),
-      number: time.getNumber(now)
+      isDay: time.isDay(date),
+      number: time.getNumber(date)
     };
     onTimeChanged(currentMoment);
     
