@@ -8,19 +8,19 @@
   var Page = require('page');
   var Ui = require('ui');
   var Obs = require('obs');
+  var TimeWidget = require('time');
   
   var RoleViews = require('RoleViews');
   var VotingViews = require('VotingViews');
   var CitizenViews = require('CitizenViews');
   
   /**
-   * Renders the home screen for each user
+   * Renders the info bar containing information about the time and the status of the game.
    */
-  function renderHome() {
-    
+  function renderInfoBar(time) {
     /**
-     * Renders information in the bar on top of the application.
-     * Token from repo Happening/Betrayal
+     * Renders one piece of information
+     * Taken from repo Happening/Betrayal
      */
     function infoItem(title, content) {
       Dom.div(function () {
@@ -33,6 +33,37 @@
       });
     }
     
+    Dom.div(function () {
+      Dom.style({
+        padding: '6px',
+        Box: 'top'
+      });
+      
+      // infoItem showing the current game time
+      infoItem('Time', function () {
+        var now = new Date();
+        var dayNight = time.isDay? 'Day': 'Night';
+        var number = time.number;
+        Dom.text(dayNight + ' ' + number);
+      });
+      
+      // infoItem for time until dawn/nightfall
+      var title = time.isDay? 'Sunset' : 'Sunrise';
+      var timestamp = new Date(time.nextChange) / 1000;
+      infoItem(title, function () {
+        TimeWidget.deltaText(timestamp);
+      });
+    });
+    
+  }
+  
+  /**
+   * Renders the home screen for each user
+   */
+  function renderHome() {
+    
+    
+    
     // Render the page
     Dom.div(function () {
       
@@ -41,12 +72,7 @@
         // get the game time from the db (using ref for the observer)
         var time = Db.shared.ref('time', 'gameTime').get();
         
-        infoItem('time', function () {
-          var now = new Date();
-          var dayNight = time.isDay? 'Day': 'Night';
-          var number = time.number;
-          Dom.text(dayNight + ' ' + number);
-        });
+        renderInfoBar(time);
         
         // show the lynching voting section
         VotingViews.lynching(time);
