@@ -123,58 +123,14 @@
        * and whether it is day or night.
        * @param date Date object containing the date we want to investigate
        */
-      getTime: getTime,
-      
-      /**
-       * Whether it is day in game right now
-       * @deprecated use getTime
-       */
-      isDay: function (date) {
-        var hours = date.getHours();
-        return dayStart <= hours && hours < nightStart; // todo hard coded right now
-      },
-      /**
-       * Determines whether it is night right now
-       * @deprecated use getTime
-       */
-      isNight: function (date) {
-        return !this.isDay(date);
-      },
-      /**
-       * Gets the number of the day or the night.
-       * We start always in day 0 or night 0, depending on isDay
-       * @deprecated use getTime
-       */
-      getNumber: function(date) {
-        // the time elapsed since the start of day 0
-        var elapsedMs = date.getTime() - startDay0.getTime();
-        
-        // the number of days in elapsed
-        var days = elapsedMs / (1000 * 60 * 60 * 24);
-        
-        // return the day as whole number
-        return Math.floor(days);
-      },
-      /**
-       * Gets the date on which the next change from date to night or vice versa
-       * happens.
-       * @deprecated use getTime
-       */
-      getNextChange: function(date) {
-        // the current number
-        var n = this.getNumber(date);
-        if (this.isDay(date)) {
-          // find start of night
-          return getStartNightN(n);
-        } else {
-          // find start of next(!) day
-          return getStartDayN(n + 1);
-        }
-      }
+      getTime: getTime
       
     };
   }
   
   exports.startingOn = startingOn;
+  exports.getTime = function (start, date) {
+    return startingOn(start).getTime(date);
+  };
   
 }());
