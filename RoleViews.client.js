@@ -8,7 +8,6 @@
   var Constants = require('Constants')();
   var Db = require('db');
   
-  var GameTime = require('GameTime');
   var VotingViews = require('VotingViews');
   
   /**
@@ -52,8 +51,7 @@
     });
   }
   
-  function werewolf() {
-    var time = GameTime.startingOn(Db.shared.get('time', 'start'));
+  function werewolf(time) {
     
     description('Werewolf', 'wolf.png', function () {
       Dom.div(function () {
@@ -72,7 +70,7 @@
     });
   }
   
-  function citizen() {
+  function citizen(time) {
     description('Citizen', 'citizen.png', function () {
       Dom.div(function () {
         Dom.p(
@@ -89,15 +87,16 @@
   
   /**
    * Gives a description view of the given role.
+   * @param time the current game time
    */
-  function descriptionOf(role) {
+  function descriptionOf(role, time) {
     // get a description based on the role
     switch(role) {
       case Constants.roles.CITIZEN:
-        citizen();
+        citizen(time);
         break;
       case Constants.roles.WEREWOLF:
-        werewolf();
+        werewolf(time);
         break;
     }
   }
