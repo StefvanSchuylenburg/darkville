@@ -64,54 +64,60 @@
       return dayStart <= hours && hours < nightStart;
     }
     
+    function getNumber(date) {
+      // the time elapsed since the start of day 0
+      var elapsedMs = date.getTime() - startDay0.getTime();
+      
+      // the number of days in elapsed
+      var days = elapsedMs / (1000 * 60 * 60 * 24);
+      
+      // return the day as whole number
+      return Math.floor(days);
+    }
+    
     /**
      * Returns an object containing data for the number of the day
      * and whether it is day or night.
      * @param date Date object containing the date we want to investigate
      */
     function getTime(date) {
+      // getting values used for multiple properties
+      var isDay = isDay(date);
+      var number = getNumber(date);
+      
+      // getting time to nextChange
+      var nextChange;
+      if (isDay) nextChange = getStartNightN(number);
+      else nextChange = getStartDay(number + 1);
+      
       return {
         
         /**
          * Whether it is day in game on this moment
          */
-        isDay: isDay(date),
+        isDay: isDay,
         
         /**
          * Determines whether it is night right now
          */
-        isNight: !isDay(date),
+        isNight: !isDay,
         
         /**
          * Gets the number of the day or the night.
          * We start always in day 0 or night 0, depending on isDay
          */
-         getNumber: function(date) {
-           // the time elapsed since the start of day 0
-           var elapsedMs = date.getTime() - startDay0.getTime();
-           
-           // the number of days in elapsed
-           var days = elapsedMs / (1000 * 60 * 60 * 24);
-           
-           // return the day as whole number
-           return Math.floor(days);
-         },
+         getNumber: number,
          
          /**
           * Gets the date on which the next change from date to night or vice versa
           * happens.
           */
-         getNextChange: function(date) {
-           // the current number
-           var n = this.getNumber(date);
-           if (this.isDay(date)) {
-             // find start of night
-             return getStartNightN(n);
-           } else {
-             // find start of next(!) day
-             return getStartDayN(n + 1);
-           }
-         }
+         getNextChange: nextChange,
+         
+         /**
+          * Gives an id that is unique for this isDay - number combination
+          */
+         timeId: (isDay? 'day' : 'night') + number
       };
     }
     
