@@ -12,7 +12,7 @@
   // variables
   
   // the current GameTime (is updated on restart)
-  var time = GameTime.startingOn(Db.shared.get('time', 'start'));
+  var gameTime = GameTime.startingOn(Db.shared.get('time', 'start'));
   
   /**
    * + Jonas Raoni Soares Silva
@@ -218,27 +218,22 @@
   function onTimeChanged(lastTime) {
     // getting the time
     var now = new Date();
+    var currentTime = time.getTime(now);
     
     // starting new timer
-    var nextChange = time.getNextChange(now);
+    var nextChange = time.nextChange;
     var delay = nextChange.getTime() - now.getTime();
     
-    // get the current time
-    var currentMoment = {
-      isDay: time.isDay(now),
-      number: time.getNumber(now)
-    };
-    
-    Timer.set(delay, 'onTimeChanged', currentMoment);
+    Timer.set(delay, 'onTimeChanged', currentTime);
     
     // calling startDay/startNight (only when the time is different)
-    if (lastTime.isDay != currentMoment.isDay || lastTime.number != currentMoment.number) {
-      // the time has changed
+    if (lastTime.timeId !== currentTime.timeId) {
+      // the time is different
       // anounce the start of the day/night
-      if (currentMoment.isDay) {
-        startDay(currentMoment.number);
+      if (currentTime.isDay) {
+        startDay(currentTime.number);
       } else {
-        startNight(currentMoment.number);
+        startNight(currentTime.number);
       }
     }
   }
@@ -282,14 +277,10 @@
     });
     
     // starting the timer and init the game time
-    time = GameTime.startingOn(now);
+    gameTime = GameTime.startingOn(now);
   
     var date = new Date();
-    var currentMoment = {
-      isDay: time.isDay(date),
-      number: time.getNumber(date)
-    };
-    onTimeChanged(currentMoment);
+    onTimeChanged(gameTime.getTime(now));
     
     log('The game has been restarted');
   }

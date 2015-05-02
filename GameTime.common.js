@@ -106,13 +106,13 @@
          * Gets the number of the day or the night.
          * We start always in day 0 or night 0, depending on isDay
          */
-         getNumber: number,
+         number: number,
          
          /**
           * Gets the date on which the next change from date to night or vice versa
           * happens.
           */
-         getNextChange: nextChange,
+         nextChange: nextChange,
          
          /**
           * Gives an id that is unique for this isDay - number combination
