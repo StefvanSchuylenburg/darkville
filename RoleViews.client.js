@@ -51,6 +51,22 @@
     });
   }
   
+  function seer(time) {
+    description('Seer', 'seer.png', function () {
+      Dom.div(function () {
+        Dom.p(
+          'You are a seer. ' +
+          'You can see straight through the appearance people make ' +
+          'to discover who they really are. ' +
+          'Each night you can investigate one person to find their true role.'
+        );
+        Dom.p(
+          'You win when all the werewolves are dead.'
+        );
+      });
+    });
+  }
+  
   function werewolf(time) {
     
     description('Werewolf', 'wolf.png', function () {
@@ -70,7 +86,7 @@
     });
   }
   
-  function citizen(time) {
+  function citizen() {
     description('Citizen', 'citizen.png', function () {
       Dom.div(function () {
         Dom.p(
@@ -93,10 +109,13 @@
     // get a description based on the role
     switch(role) {
       case Constants.roles.CITIZEN:
-        citizen(time);
+        citizen();
         break;
       case Constants.roles.WEREWOLF:
         werewolf(time);
+        break;
+      case Constants.roles.SEER:
+        seer(time);
         break;
     }
   }
