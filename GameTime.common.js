@@ -5,8 +5,6 @@
 (function () {
   'use strict';
   
-  require('Constants');
-  
   /**
    * Returns the GameTime that started on the real time given start time.
    * @param startTime The unix time in ms that the game has started.
@@ -58,10 +56,78 @@
       return startNightN;
     }
     
+    /**
+     * Determines whether it is day or night on the given data
+     */
+    function isDay(date) {
+      var hours = date.getHours();
+      return dayStart <= hours && hours < nightStart;
+    }
+    
+    /**
+     * Returns an object containing data for the number of the day
+     * and whether it is day or night.
+     * @param date Date object containing the date we want to investigate
+     */
+    function getTime(date) {
+      return {
+        
+        /**
+         * Whether it is day in game on this moment
+         */
+        isDay: isDay(date),
+        
+        /**
+         * Determines whether it is night right now
+         */
+        isNight: !isDay(date),
+        
+        /**
+         * Gets the number of the day or the night.
+         * We start always in day 0 or night 0, depending on isDay
+         */
+         getNumber: function(date) {
+           // the time elapsed since the start of day 0
+           var elapsedMs = date.getTime() - startDay0.getTime();
+           
+           // the number of days in elapsed
+           var days = elapsedMs / (1000 * 60 * 60 * 24);
+           
+           // return the day as whole number
+           return Math.floor(days);
+         },
+         
+         /**
+          * Gets the date on which the next change from date to night or vice versa
+          * happens.
+          */
+         getNextChange: function(date) {
+           // the current number
+           var n = this.getNumber(date);
+           if (this.isDay(date)) {
+             // find start of night
+             return getStartNightN(n);
+           } else {
+             // find start of next(!) day
+             return getStartDayN(n + 1);
+           }
+         }
+      };
+    }
+    
     
     return {
+      
+      /**
+       * Returns an object containing data for the number of the day
+       * and whether it is day or night.
+       * @param date Date object containing the date we want to investigate
+       */
+      getTime: getTime,
+      
       /**
        * Whether it is day in game right now
+       * @deprecated use getTime
        */
       isDay: function (date) {
         var hours = date.getHours();
@@ -69,6 +135,7 @@
       },
       /**
        * Determines whether it is night right now
+       * @deprecated use getTime
        */
       isNight: function (date) {
         return !this.isDay(date);
@@ -76,6 +143,7 @@
       /**
        * Gets the number of the day or the night.
        * We start always in day 0 or night 0, depending on isDay
+       * @deprecated use getTime
        */
       getNumber: function(date) {
         // the time elapsed since the start of day 0
@@ -90,6 +158,7 @@
       /**
        * Gets the date on which the next change from date to night or vice versa
        * happens.
+       * @deprecated use getTime
        */
       getNextChange: function(date) {
         // the current number
