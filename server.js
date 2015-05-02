@@ -263,6 +263,7 @@
     // the roles to select
     var selectRoles = {};
     selectRoles[Constants.roles.WEREWOLF] = config.nWerewolf;
+    selectRoles[Constants.roles.SEER] = config.nSeer;
     
     // the roles for the users
     var userRoles = generateRoles(selectRoles, users);
