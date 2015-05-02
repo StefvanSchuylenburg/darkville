@@ -324,16 +324,4 @@
     }
   };
   
-  /**
-   * Returns the current GameTime as a GameTime object.
-   * See the GameTime module at the returned value for information about this object.
-   * The gameTime is returned through the callback function as the only argument
-   */
-  exports.client_getTime = function (callback) {
-    var now = new Date();
-    var time = gameTime.getTime(now);
-    log('callback: ' + JSON.stringify(callback));
-    callback(time);
-  };
-  
 }());
