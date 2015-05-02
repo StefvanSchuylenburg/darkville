@@ -5,9 +5,10 @@
   
   var Dom = require('dom');
   var Plugin = require('plugin');
-  var Constants = require('Constants')();
+  var Ui = require('ui');
   var Db = require('db');
   
+  var Constants = require('Constants')();
   var VotingViews = require('VotingViews');
   
   /**
@@ -63,6 +64,36 @@
         Dom.p(
           'You win when all the werewolves are dead.'
         );
+        
+        // section to activate the seer power
+        Dom.div(function () {
+          Dom.style({
+            'background-color': 'white',
+            'box-shadow': '0 2px rgba(0,0,0,.1)',
+            display: 'block',
+            padding: '1em'
+          });
+          
+          // the investigate button
+          var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
+          if (time.isNight && isAlive) {
+            Ui.bigButton('Investigate');
+          } else { // we can not vote
+            
+            // reason why we can not vote
+            Dom.div(function () {
+              Dom.style({color: 'red'});
+              if (time.isDay) Dom.text('You can only investigate people during the night.');
+              else if (!isAlive) Dom.text('You are dead; your seer power is useless now!');
+            });
+            
+            Dom.div(function () {
+              Dom.style({'background-color': '#A88698'});
+              Dom.cls('big-button');
+              Dom.text('Discover');
+            });
+          }
+        });
       });
     });
   }
