@@ -56,14 +56,6 @@
       return startNightN;
     }
     
-    /**
-     * Determines whether it is day or night on the given data
-     */
-    function isDay(date) {
-      var hours = date.getHours();
-      return dayStart <= hours && hours < nightStart;
-    }
-    
     function getNumber(date) {
       // the time elapsed since the start of day 0
       var elapsedMs = date.getTime() - startDay0.getTime();
@@ -82,13 +74,15 @@
      */
     function getTime(date) {
       // getting values used for multiple properties
-      var isDay = isDay(date);
       var number = getNumber(date);
+      
+      var hours = date.getHours();
+      var isDay = dayStart <= hours && hours < nightStart;
       
       // getting time to nextChange
       var nextChange;
       if (isDay) nextChange = getStartNightN(number);
-      else nextChange = getStartDay(number + 1);
+      else nextChange = getStartDayN(number + 1);
       
       return {
         

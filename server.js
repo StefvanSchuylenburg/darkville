@@ -218,22 +218,22 @@
   function onTimeChanged(lastTime) {
     // getting the time
     var now = new Date();
-    var currentTime = time.getTime(now);
+    var time = gameTime.getTime(now);
     
     // starting new timer
     var nextChange = time.nextChange;
     var delay = nextChange.getTime() - now.getTime();
     
-    Timer.set(delay, 'onTimeChanged', currentTime);
+    Timer.set(delay, 'onTimeChanged', time);
     
     // calling startDay/startNight (only when the time is different)
-    if (lastTime.timeId !== currentTime.timeId) {
+    if (lastTime.timeId !== time.timeId) {
       // the time is different
       // anounce the start of the day/night
-      if (currentTime.isDay) {
-        startDay(currentTime.number);
+      if (time.isDay) {
+        startDay(time.number);
       } else {
-        startNight(currentTime.number);
+        startNight(time.number);
       }
     }
   }
@@ -280,7 +280,7 @@
     gameTime = GameTime.startingOn(now);
   
     var date = new Date();
-    onTimeChanged(gameTime.getTime(now));
+    onTimeChanged(gameTime.getTime(date));
     
     log('The game has been restarted');
   }
@@ -332,6 +332,7 @@
   exports.client_getTime = function (callback) {
     var now = new Date();
     var time = gameTime.getTime(now);
+    log('callback: ' + JSON.stringify(callback));
     callback(time);
   };
   
