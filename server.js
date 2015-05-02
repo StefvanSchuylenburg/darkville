@@ -226,6 +226,9 @@
     
     Timer.set(delay, 'onTimeChanged', time);
     
+    // update time in the database
+    Db.shared.set('time', 'gameTime', time);
+    
     // calling startDay/startNight (only when the time is different)
     if (lastTime.timeId !== time.timeId) {
       // the time is different
@@ -278,9 +281,12 @@
     
     // starting the timer and init the game time
     gameTime = GameTime.startingOn(now);
-  
-    var date = new Date();
-    onTimeChanged(gameTime.getTime(date));
+    var time = gameTime.getTime(new Date());
+    onTimeChanged(time);
+    
+    // and update the time value in the database
+    Db.shared.set('time', 'gameTime', time);
+    
     
     log('The game has been restarted');
   }
