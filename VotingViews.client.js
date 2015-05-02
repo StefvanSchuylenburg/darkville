@@ -163,13 +163,12 @@
   
   /**
    * A view for the voting involved for the lynching.
-   * @param time the game time used for this game.
+   * @param time the current gametime
    */
   function lynching(time) {
-    var now = new Date();
     var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
     // the id of the the current voting or the previous one
-    var number = time.getNumber(now);
+    var number = time.number;
     var votingId = 'day' + number;
     
     voteView(function () {
@@ -180,7 +179,7 @@
       );
       
       // can we vote?
-      if (time.isDay(now) && isAlive && number > 0) {
+      if (time.isDay && isAlive && number > 0) {
         // we can vote
         voteButton(votingId);
       } else {
@@ -191,7 +190,7 @@
           Dom.style({color: 'red'});
           
           if (!isAlive) Dom.text('You are dead; you can no longer vote!');
-          else if (!time.isDay(now)) Dom.text('You can only vote during the day.');
+          else if (!time.isDay) Dom.text('You can only vote during the day.');
           else if (number > 0) Dom.text('There is no voting on the first day.');
         });
         
@@ -211,30 +210,28 @@
    */
   function werewolves(time) {
     // TODO: still a lot is a duplicate of lynching, require clean-up
-    var now = new Date();
     var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
     // the id of the the current voting or the previous one
-    var number = time.getNumber(now);
-    var votingId = 'night' + (number - time.isDay(now)? 1 : 0);
+    var votingId = 'night' + (time.number - time.isDay? 1 : 0);
     
     voteView(function() {
       Dom.p(
         'Vote here to kill the stupid citizens. '
       );
-      if (time.isNight(now) && isAlive) { // we can vote
+      if (time.isNight && isAlive) { // we can vote
         voteButton(votingId);
       } else { // we can not vote
         // show message why
         Dom.p(function () {
           Dom.style({color: 'red'});
           if (!isAlive) Dom.text('You are dead; you can no longer vote!');
-          else if (!time.isNight(now)) Dom.text('You can only vote during the night');
+          else if (!time.isNight) Dom.text('You can only vote during the night');
         });
         disabledVoteButton();
       }
       
       // link to vote overview
-      if (number > 0 || time.isNight(now)) { // the first voting has started
+      if (time.number > 0 || time.isNight) { // the first voting has started
         overviewLink(votingId);
       }
     });
