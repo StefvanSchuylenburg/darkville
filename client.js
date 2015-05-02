@@ -7,8 +7,8 @@
   var Db = require('db');
   var Page = require('page');
   var Ui = require('ui');
+  var Obs = require('obs');
   
-  var GameTime = require('GameTime');
   var RoleViews = require('RoleViews');
   var VotingViews = require('VotingViews');
   var CitizenViews = require('CitizenViews');
@@ -17,9 +17,6 @@
    * Renders the home screen for each user
    */
   function renderHome() {
-    
-    // the current game time
-    var time = GameTime.startingOn(Db.shared.get('time').start);
     
     /**
      * Renders information in the bar on top of the application.
@@ -40,26 +37,34 @@
     Dom.div(function () {
       
       // display current time
-      infoItem('time', function () {
-        var now = new Date();
-        var dayNight = time.isDay(now)? 'Day': 'Night';
-        var number = time.getNumber(now);
-        Dom.text(dayNight + ' ' + number);
-      });
-      
-      VotingViews.lynching(time);
-      
-      // button to go to the overview of the citizens
-      Ui.bigButton(function () {
-        Dom.text('List of citizens');
-        Dom.on('click', function () {
-          // go to citizen overview
-          Page.nav(['citizens']);
+      Obs.observe(function () {
+        // get the game time from the db (using ref for the observer)
+        var time = Db.shared.ref('time', 'gameTime').get();
+        
+        infoItem('time', function () {
+          var now = new Date();
+          var dayNight = time.isDay? 'Day': 'Night';
+          var number = time.number;
+          Dom.text(dayNight + ' ' + number);
         });
+        
+        // show the lynching voting section
+        VotingViews.lynching(time);
+        
+        // button to go to the overview of the citizens
+        Ui.bigButton(function () {
+          Dom.text('List of citizens');
+          Dom.on('click', function () {
+            // go to citizen overview
+            Page.nav(['citizens']);
+          });
+        });
+        
+        // display the role
+        RoleViews.description(Db.personal.get('role'), time);
       });
       
-      // display the role
-      RoleViews.description(Db.personal.get('role'));
+      
     });
   }
   
