@@ -104,7 +104,8 @@
           
           // the investigate button
           var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
-          if (time.isNight && isAlive) {
+          var hasInvestigated = Db.personal.get('investigate', time.timeId);
+          if (time.isNight && isAlive && !hasInvestigated) {
             // get the users that are still alive
             var users = UserViews.getUsers({isAlive: true});
             Ui.bigButton('Investigate', UserModal.bind(this, users, 'Investigate', null, investigate));
@@ -113,8 +114,9 @@
             // reason why we can not vote
             Dom.div(function () {
               Dom.style({color: 'red'});
-              if (time.isDay) Dom.text('You can only investigate people during the night.');
+              if (!time.isNight) Dom.text('You can only investigate people during the night.');
               else if (!isAlive) Dom.text('You are dead; your seer power is useless now!');
+              else if (hasInvestigated) Dom.text('You have already used this ability this night.');
             });
             
             Dom.div(function () {
