@@ -102,12 +102,8 @@
           var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
           if (time.isNight && isAlive) {
             // get the users that are still alive
-            var users = Object.keys(Db.shared.get('users'));
-            var aliveUsers = users.filter(function (user) {
-              return Db.shared.get('users', user, 'isAlive');
-            });
-            
-            Ui.bigButton('Investigate', UserModal.bind(this, aliveUsers, 'Investigate', null, investigate));
+            var users = UserViews.getUsers({isAlive: true});
+            Ui.bigButton('Investigate', UserModal.bind(this, users, 'Investigate', null, investigate));
           } else { // we can not vote
             
             // reason why we can not vote

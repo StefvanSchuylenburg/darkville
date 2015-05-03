@@ -16,24 +16,6 @@
   var UserViews = require('UserViews');
   
   /**
-   * Gets the users that are still alive.
-   */
-  function livingUsers() {
-    // an object containing the users, with their id as key
-    var users = Db.shared.get('users');
-    
-    // the users that are alive
-    var alive = Object.keys(users).filter(function (user) {
-      return users[user].isAlive;
-    });
-    
-    // cast back to int (the Object.keys always returns strings)
-    return alive.map(function (user) {
-      return parseInt(user, 10);
-    });
-  }
-  
-  /**
    * Button that allows you to vote.
    */
   function voteButton(votingId) {
@@ -48,7 +30,7 @@
       Server.call('vote', votingId, user);
     }
     // the user we can vote on
-    var users = livingUsers();
+    var users = UserViews.getUsers({isAlive: true});
     
     // the button
     Ui.bigButton('Vote', UserModal.bind(this, users, 'Vote for', selectedObs, vote));
