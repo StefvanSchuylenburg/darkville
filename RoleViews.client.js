@@ -70,9 +70,15 @@
               Ui.avatar(Plugin.userAvatar(user));
               UserViews.name(user);
               
-              Dom.span(" is a ");
+              Dom.span(function () {
+                Dom.style({
+                  margin: '1em',
+                  color: '#AAA'
+                });
+                Dom.text(' is a ');
+              });
               
-              Dom.div(role);
+              nameOf(Constants.roles.SEER);
             });
           } else { // the role could not be retrieved
             Dom.text('The role could not be found!');
