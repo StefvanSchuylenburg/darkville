@@ -11,6 +11,8 @@
   var Ui = require('ui');
   var Obs = require('obs');
   
+  var UserViews = require('UserViews');
+  
   /**
    * A pop-up like menu to choose a user to vote on.
    * @param users the users you can choose
@@ -40,7 +42,7 @@
           users.forEach(function (user) {
             Ui.item(function () {
               Ui.avatar(Plugin.userAvatar(user));
-              Dom.text(Plugin.userName(user));
+              UserViews.name(user);
               
               // making the selected vote appear different
               if (user === selectedGet) {

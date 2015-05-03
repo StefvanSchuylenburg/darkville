@@ -13,6 +13,7 @@
   var Page = require('page');
   
   var UserModal = require('SelectUserModal');
+  var UserViews = require('UserViews');
   
   /**
    * Gets the users that are still alive.
@@ -181,21 +182,6 @@
   }
   
   /**
-   * Shows the name of the user
-   */
-  function userName(user) {
-    Dom.h2(function () {
-      Dom.style({
-        borderBottomStyle: 'none',
-        textTransform: 'initial',
-        margin: '4px'
-      });
-      
-      Dom.text(Plugin.userName(user));
-    });
-  }
-  
-  /**
    * Shows where the given user voted for.
    * The html object will be a <tr> element
    * (Will do nothing if the user does not participate in the voting.)
@@ -212,7 +198,7 @@
         
         // the user
         Ui.avatar(Plugin.userAvatar(userId));
-        userName(userId);
+        UserViews.name(userId);
         
         // check whether he has voted
         if (vote) {
@@ -226,7 +212,7 @@
           });
           
           // the player voted on
-          userName(vote);
+          UserViews.name(vote);
           Ui.avatar(Plugin.userAvatar(vote));
         } else {
           // small message saying he has not voted yet
