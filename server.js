@@ -327,7 +327,8 @@
       // the current user is allowed to vote
       
       // and voting!
-      Db.shared.set('votings', votingId, currentUser, vote);
+      var intVote = parseInt(vote, 10);
+      Db.shared.set('votings', votingId, currentUser, intVote);
     }
   };
   
@@ -339,9 +340,25 @@
    * or when the role is not available.
    */
   exports.client_investigateRole = function (user, callback) {
-    // TODO: verify seerness
-    var role = Db.personal(user).get('role');
-    callback.reply(role);
+    var time = gameTime.getTime(new Date());
+    // the user that requested the investigate
+    var sender = Plugin.userId();
+    var isSeer = Db.personal(sender).get('role') === Constants.roles.SEER;
+    
+    // check whether he has investigated yet
+    var investigated = Db.personal(sender).get('investigate', time.timeId);
+    
+    if (time.isNight && isSeer && !investigated) { // the user may ask for the role
+      // get the role from the user
+      var role = Db.personal(user).get('role');
+      
+      // mark as investigated and sent reply
+      Db.personal(sender).set('investigate', time.timeId, user);
+      callback.reply(role);
+    } else { // not allowed
+      callback.reply(null);
+    }
+    
   };
   
 }());
