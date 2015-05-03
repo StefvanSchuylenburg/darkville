@@ -62,8 +62,8 @@
               
               // handling tap event
               Dom.onTap(function () {
-                callback(user);
                 Modal.remove();
+                callback(user);
               });
             });
           });

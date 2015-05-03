@@ -7,10 +7,12 @@
   var Plugin = require('plugin');
   var Ui = require('ui');
   var Db = require('db');
+  var Modal = require('modal');
   
   var Constants = require('Constants')();
   var VotingViews = require('VotingViews');
   var UserModal = require('SelectUserModal');
+  var UserViews = require('UserViews');
   
   /**
    * Gives a description of a role.
@@ -58,14 +60,28 @@
      * Shows the role of the user in a separated modal.
      */
     function investigate(user) {
-      
+      Modal.show('Investigate ', function () {
+        Dom.style({maxWidth: '80%'});
+        Dom.div(function () {
+          Ui.item(function () {
+            Ui.avatar(Plugin.userAvatar(user));
+            UserViews.name(user);
+            
+            Dom.span(" is a ");
+            
+            Dom.span("TEST");
+          });
+        });
+        
+        
+      });
     }
     
     description('Seer', 'seer.png', function () {
       Dom.div(function () {
         Dom.p(
           'You are a seer. ' +
-          'You can see straight through the appearance people make ' +
+          'You can see straight through how people appear ' +
           'to discover who they really are. ' +
           'Each night you can investigate one person to find their true role.'
         );
