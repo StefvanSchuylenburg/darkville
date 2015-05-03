@@ -16,11 +16,12 @@
    * @param users the users you can choose
    * @param an observer holding what currently is selected.
       Can be set to null if it is not used.
+   * @param title The title at the top of the modal
    * @param callback will be called when someone is selected
    */
-  function userModal(users, selected, callback) {
-    Modal.show('Vote for', function () {
-      Dom.style({width: '80%'});
+  function userModal(users, title, selected, callback) {
+    Modal.show(title, function () {
+      Dom.style({maxWidth: '80%'});
       
       // the panel with the content
       Dom.div(function () {

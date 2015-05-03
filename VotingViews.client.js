@@ -50,7 +50,7 @@
     var users = livingUsers();
     
     // the button
-    Ui.bigButton('Vote', UserModal.bind(this, users, selectedObs, vote));
+    Ui.bigButton('Vote', UserModal.bind(this, users, 'Vote for', selectedObs, vote));
   }
   
   /**

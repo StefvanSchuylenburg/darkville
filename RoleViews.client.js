@@ -91,7 +91,7 @@
               return Db.shared.get('users', user, 'isAlive');
             });
             
-            Ui.bigButton('Investigate', UserModal.bind(this, aliveUsers, null, investigate));
+            Ui.bigButton('Investigate', UserModal.bind(this, aliveUsers, 'Investigate', null, investigate));
           } else { // we can not vote
             
             // reason why we can not vote
