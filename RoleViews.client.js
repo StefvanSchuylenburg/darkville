@@ -184,8 +184,53 @@
   }
   
   /**
+   * Renders the name with the image found and the given source and the given text.
+   */
+  function name(icon, text) {
+    Dom.h2(function () {
+      Dom.style({
+        borderBottomStyle: 'none',
+        textTransform: 'initial',
+        margin: '4px',
+        color: Plugin.colors().highlight
+      });
+      
+      // small image indicating the role
+      Dom.img(function () {
+        Dom.style({
+          height: '1em',
+          width: '1em'
+        });
+        Dom.prop('src', Plugin.resourceUri(icon));
+      });
+      
+      // the text showing the role
+      Dom.text(text);
+    });
+  }
+  
+  /**
+   * Displays the name of the role (with a symbol and such.)
+   */
+  function nameOf(role) {
+    switch(role) {
+      case Constants.roles.CITIZEN:
+        name('citizen.png', 'Citizen');
+        break;
+      case Constants.roles.WEREWOLF:
+        name('wolf.png', 'Werewolf');
+        break;
+      case Constants.roles.SEER:
+        name('seer.png', 'Seer');
+        break;
+    }
+  }
+  
+  /**
    * A view giving a description and access to the given role.
    */
   exports.description = descriptionOf;
+  
+  exports.name = nameOf;
   
 }());
