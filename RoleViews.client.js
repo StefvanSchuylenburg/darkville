@@ -8,6 +8,7 @@
   var Ui = require('ui');
   var Db = require('db');
   var Modal = require('modal');
+  var Server = require('server');
   
   var Constants = require('Constants')();
   var VotingViews = require('VotingViews');
@@ -60,20 +61,23 @@
      * Shows the role of the user in a separated modal.
      */
     function investigate(user) {
-      Modal.show('Investigate ', function () {
-        Dom.style({maxWidth: '80%'});
-        Dom.div(function () {
-          Ui.item(function () {
-            Ui.avatar(Plugin.userAvatar(user));
-            UserViews.name(user);
-            
-            Dom.span(" is a ");
-            
-            Dom.span("TEST");
-          });
+      // ask the server for the role
+      Server.call('investigateRole', user, function (role) {
+        // when the server has returned
+        Modal.show('Investigate ', function () {
+          if (role) { // the role is found
+            Ui.item(function () {
+              Ui.avatar(Plugin.userAvatar(user));
+              UserViews.name(user);
+              
+              Dom.span(" is a ");
+              
+              Dom.div(role);
+            });
+          } else { // the role could not be retrieved
+            Dom.text('The role could not be found!');
+          }
         });
-        
-        
       });
     }
     

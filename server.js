@@ -331,4 +331,17 @@
     }
   };
   
+  /**
+   * Returns the role of the given user through the callback.
+   * The role can only be gotten when the requesting user is a seer
+   * and when he has not investigated in this night yet.
+   * Gives null when the requesting user is not allowed to view the role
+   * or when the role is not available.
+   */
+  exports.client_investigateRole = function (user, callback) {
+    // TODO: verify seerness
+    var role = Db.personal(user).get('role');
+    callback.reply(role);
+  };
+  
 }());
