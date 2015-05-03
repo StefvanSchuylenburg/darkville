@@ -10,6 +10,7 @@
   
   var Constants = require('Constants')();
   var VotingViews = require('VotingViews');
+  var UserModal = require('SelectUserModal');
   
   /**
    * Gives a description of a role.
@@ -53,6 +54,13 @@
   }
   
   function seer(time) {
+    /**
+     * Shows the role of the user in a separated modal.
+     */
+    function investigate(user) {
+      
+    }
+    
     description('Seer', 'seer.png', function () {
       Dom.div(function () {
         Dom.p(
@@ -77,7 +85,13 @@
           // the investigate button
           var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
           if (time.isNight && isAlive) {
-            Ui.bigButton('Investigate');
+            // get the users that are still alive
+            var users = Object.keys(Db.shared.get('users'));
+            var aliveUsers = users.filter(function (user) {
+              return Db.shared.get('users', user, 'isAlive');
+            });
+            
+            Ui.bigButton('Investigate', UserModal.bind(this, aliveUsers, null, investigate));
           } else { // we can not vote
             
             // reason why we can not vote
@@ -90,7 +104,7 @@
             Dom.div(function () {
               Dom.style({'background-color': '#A88698'});
               Dom.cls('big-button');
-              Dom.text('Discover');
+              Dom.text('Investigate');
             });
           }
         });
