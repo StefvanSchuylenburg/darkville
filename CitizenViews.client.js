@@ -8,25 +8,23 @@
   var Db = require('db');
   var Plugin = require('plugin');
   
+  var RoleViews = require('RoleViews');
+  var UserViews = require('UserViews');
+  
   /**
    * Shows the name of the user
    * @WARNING most is copied from VotingViews
    */
   function userName(user, isAlive) {
-    Dom.h2(function () {
-      Dom.style({
-        borderBottomStyle: 'none',
-        textTransform: 'initial',
-        margin: '4px'
-      });
+    Dom.div(function () {
+      UserViews.name(user);
       
       if (!isAlive) { // the user is not alive
         Dom.style({
-          textDecoration: 'line-through'
+          textDecoration: 'line-through',
+          color: '#777'
         });
       }
-      
-      Dom.text(Plugin.userName(user));
     });
   }
   
@@ -43,8 +41,15 @@
       
       // add role when the user is dead
       if (!userData.isAlive) {
-        // TODO: user RoleViews to render the role name
-        Dom.text('(' + userData.role + ')');
+        Dom.span(function () {
+          Dom.style({
+            margin: '1em',
+            color: '#AAA'
+          });
+          Dom.text(' was a ');
+        });
+        
+        RoleViews.name(userData.role);
       }
     });
   }
