@@ -141,7 +141,7 @@
     
     if (max) { // there has been voted
       // get the users that have the max number of votes
-      var maxUsers = Object.keys(voting).filter(function (user) {
+      var maxUsers = Object.keys(votes).filter(function (user) {
         return votes[user] === max;
       });
       
