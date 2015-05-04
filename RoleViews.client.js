@@ -78,7 +78,7 @@
                 Dom.text(' is a ');
               });
               
-              nameOf(Constants.roles.SEER);
+              nameOf(role);
             });
           } else { // the role could not be retrieved
             Dom.text('The role could not be found!');
