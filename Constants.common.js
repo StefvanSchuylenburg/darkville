@@ -5,8 +5,9 @@
    
    var constants = {
      roles: {
-       CITIZEN: "citizen",
-       WEREWOLF: "werewolf"
+       CITIZEN: 'citizen',
+       WEREWOLF: 'werewolf',
+       SEER: 'seer'
      }
    };
    

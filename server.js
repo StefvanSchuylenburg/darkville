@@ -141,7 +141,7 @@
     
     if (max) { // there has been voted
       // get the users that have the max number of votes
-      var maxUsers = Object.keys(voting).filter(function (user) {
+      var maxUsers = Object.keys(votes).filter(function (user) {
         return votes[user] === max;
       });
       
@@ -263,6 +263,7 @@
     // the roles to select
     var selectRoles = {};
     selectRoles[Constants.roles.WEREWOLF] = config.nWerewolf;
+    selectRoles[Constants.roles.SEER] = config.nSeer;
     
     // the roles for the users
     var userRoles = generateRoles(selectRoles, users);
@@ -326,8 +327,38 @@
       // the current user is allowed to vote
       
       // and voting!
-      Db.shared.set('votings', votingId, currentUser, vote);
+      var intVote = parseInt(vote, 10);
+      Db.shared.set('votings', votingId, currentUser, intVote);
     }
+  };
+  
+  /**
+   * Returns the role of the given user through the callback.
+   * The role can only be gotten when the requesting user is a seer
+   * and when he has not investigated in this night yet.
+   * Gives null when the requesting user is not allowed to view the role
+   * or when the role is not available.
+   */
+  exports.client_investigateRole = function (user, callback) {
+    var time = gameTime.getTime(new Date());
+    // the user that requested the investigate
+    var sender = Plugin.userId();
+    var isSeer = Db.personal(sender).get('role') === Constants.roles.SEER;
+    
+    // check whether he has investigated yet
+    var investigated = Db.personal(sender).get('investigate', time.timeId);
+    
+    if (time.isNight && isSeer && !investigated) { // the user may ask for the role
+      // get the role from the user
+      var role = Db.personal(user).get('role');
+      
+      // mark as investigated and sent reply
+      Db.personal(sender).set('investigate', time.timeId, user);
+      callback.reply(role);
+    } else { // not allowed
+      callback.reply(null);
+    }
+    
   };
   
 }());

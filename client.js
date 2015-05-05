@@ -135,6 +135,13 @@
         value: 2
       });
       
+      // the setting for the number of seer
+      Dom.p('Number of seers in the game:');
+      Form.input({
+        name: 'nSeer',
+        value: 1
+      });
+      
       // restart button
       Form.check({
         name: 'restart',
