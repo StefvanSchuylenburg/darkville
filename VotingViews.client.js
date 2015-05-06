@@ -138,7 +138,7 @@
     // TODO: still a lot is a duplicate of lynching, require clean-up
     var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
     // the id of the the current voting or the previous one
-    var votingId = 'night' + (time.number - time.isDay? 1 : 0);
+    var votingId = 'night' + (time.number - time.isDay);
     
     voteView(function() {
       Dom.p(
