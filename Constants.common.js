@@ -8,6 +8,18 @@
        CITIZEN: 'citizen',
        WEREWOLF: 'werewolf',
        SEER: 'seer'
+     },
+     events: {
+       // the type of event we are handling
+       type: {
+         NEW_GAME: 'new game',
+         // a death event contains a cause (deathCauses) and the user (id) that died.
+         DEATH: 'death'
+       },
+       deathCauses: {
+         LYNCHING: 'lynching',
+         WEREWOLVES: 'werewolves'
+       }
      }
    };
    
