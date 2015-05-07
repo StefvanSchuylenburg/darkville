@@ -167,21 +167,21 @@
    * Closes the previous night and starts the new day.
    * @param number the current number of the day that just started
    */
-  function startDay(number) {
+  function startDay(time) {
     // message about the start of the day
-    log('Starting day ', number);
+    log('Starting day ', time.number);
     
-    if (number === 0) { // no voting on day 0
+    if (time.number === 0) { // no voting on day 0
       // TODO: send some message about first day and welcome and stuff
     } else {
       // kill the player voted for by the werewolves
-      var target = mostVotes('night' + (number - 1));
+      var target = mostVotes(gameTime.previous(time).timeId);
       if (target) {
         kill(target);
       }
       
       // start a new vote
-      var votingId = 'day' + number;
+      var votingId = time.timeId;
       var users = Plugin.userIds().filter(isAlive);
       createVoting(votingId, users);
     }
@@ -192,20 +192,20 @@
    * Closes the day and starts the night.
    * @param number the current number of the day
    */
-  function startNight(number) {
+  function startNight(time) {
     // message about start of the night
-    log('Starting night ', number);
+    log('Starting night ', time.number);
     
-    if (number > 0) { // if there was a day before, then finish the lynching
+    if (time.number > 0) { // if there was a day before, then finish the lynching
       // kill the player voted for (if there has been voted)
-      var target = mostVotes('day' + number);
+      var target = mostVotes(gameTime.previous(time).timeId);
       if (target) {
         kill(target);
       }
     }
     
     // start a new vote
-    var votingId = 'night' + number;
+    var votingId = time.timeId;
     var werewolves = usersWithRole(Constants.roles.WEREWOLF);
     createVoting(votingId, werewolves.filter(isAlive));
   }
@@ -234,9 +234,9 @@
       // the time is different
       // anounce the start of the day/night
       if (time.isDay) {
-        startDay(time.number);
+        startDay(time);
       } else {
-        startNight(time.number);
+        startNight(time);
       }
     }
   }
