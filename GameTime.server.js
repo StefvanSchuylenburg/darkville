@@ -67,6 +67,34 @@
       return Math.floor(days);
     }
     
+    function getTimeId(number, isDay) {
+      return (isDay? 'day' : 'night') + number;
+    }
+    
+    /**
+     * Gets the time before the given time.
+     */
+    function previous(time) {
+      var isDay = !time.isDay;
+      // go back one day if it was day
+      var number = time.number - time.isDay;
+      // how long it is day (in hours)
+      var dayTime = nightStart - dayStart;
+      // time the current day or night has lasted
+      var changeTime = time.isDay? dayTime: (24 - dayTime);
+      var nextChange = new Date(time.nextChange.getTime());
+      nextChange.setHours(nextChange.getHours() - changeTime);
+      
+      // return the time object.
+      return {
+        isDay: isDay,
+        isNight: !isDay,
+        number: number,
+        nextChange: nextChange,
+        timeId: getTimeId(number, isDay)
+      };
+    }
+    
     /**
      * Returns an object containing data for the number of the day
      * and whether it is day or night.
@@ -111,7 +139,7 @@
          /**
           * Gives an id that is unique for this isDay - number combination
           */
-         timeId: (isDay? 'day' : 'night') + number
+         timeId: getTimeId(number, isDay)
       };
     }
     
@@ -123,7 +151,15 @@
        * and whether it is day or night.
        * @param date Date object containing the date we want to investigate
        */
-      getTime: getTime
+      getTime: getTime,
+      
+      /**
+       * Gets the game time for the given time.
+       * So the day that was before the given night or the night
+       * that was before the given day.
+       * @param time - the time after the returned value
+       */
+      previous: previous
       
     };
   }
