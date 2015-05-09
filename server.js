@@ -8,6 +8,7 @@
   
   var Constants = require('Constants')();
   var GameTime = require('GameTime');
+  var Events = require('Events');
   
   // variables
   
@@ -99,11 +100,15 @@
    * Kills the given user.
    * The user is no longer alive and his role will be exposed.
    */
-  function kill(user) {
+  function kill(user, time, cause) {
     Db.shared.set('users', user, {
       isAlive: false,
       role: Db.personal(user).get('role')
     });
+    
+    // create event
+    var event = Events.death(user, cause);
+    Events.add(time, event);
   }
   
   /**
@@ -175,9 +180,10 @@
       // TODO: send some message about first day and welcome and stuff
     } else {
       // kill the player voted for by the werewolves
-      var target = mostVotes(gameTime.previous(time).timeId);
+      var prevTime = gameTime.previous(time);
+      var target = mostVotes(prevTime.timeId);
       if (target) {
-        kill(target);
+        kill(target, prevTime, Constants.events.deathCause.WEREWOLVES);
       }
       
       // start a new vote
@@ -198,9 +204,10 @@
     
     if (time.number > 0) { // if there was a day before, then finish the lynching
       // kill the player voted for (if there has been voted)
-      var target = mostVotes(gameTime.previous(time).timeId);
+      var prevTime = gameTime.previous(time);
+      var target = mostVotes(prevTime.timeId);
       if (target) {
-        kill(target);
+        kill(target, prevTime, Constants.events.deathCause.LYNCHING);
       }
     }
     
