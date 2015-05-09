@@ -230,7 +230,7 @@
     Db.shared.set('time', 'gameTime', time);
     
     // calling startDay/startNight (only when the time is different)
-    if (lastTime.timeId !== time.timeId) {
+    if (!lastTime || lastTime.timeId !== time.timeId) {
       // the time is different
       // anounce the start of the day/night
       if (time.isDay) {
@@ -283,7 +283,7 @@
     // starting the timer and init the game time
     gameTime = GameTime.startingOn(now);
     var time = gameTime.getTime(new Date());
-    onTimeChanged(time);
+    onTimeChanged(null);
     
     // and update the time value in the database
     Db.shared.set('time', 'gameTime', time);
