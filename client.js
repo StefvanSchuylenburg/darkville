@@ -13,6 +13,7 @@
   var RoleViews = require('RoleViews');
   var VotingViews = require('VotingViews');
   var CitizenViews = require('CitizenViews');
+  var EventViews = require('EventViews');
   
   /**
    * Renders the info bar containing information about the time and the status of the game.
@@ -62,8 +63,6 @@
    */
   function renderHome() {
     
-    
-    
     // Render the page
     Dom.div(function () {
       
@@ -73,6 +72,9 @@
         var time = Db.shared.ref('time', 'gameTime').get();
         
         renderInfoBar(time);
+        
+        // show the recent events
+        EventViews.recent(time);
         
         // show the lynching voting section
         VotingViews.lynching(time);
