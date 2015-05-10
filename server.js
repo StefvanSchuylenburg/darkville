@@ -177,7 +177,7 @@
     log('Starting day ', time.number);
     
     if (time.number === 0) { // no voting on day 0
-      // TODO: send some message about first day and welcome and stuff
+      Events.add(time, Events.newGame()); // create event for first day
     } else {
       // kill the player voted for by the werewolves
       var prevTime = gameTime.previous(time);

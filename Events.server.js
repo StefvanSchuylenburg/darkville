@@ -52,7 +52,9 @@
   /**
    * Event denoting that a new game has started.
    */
-  var newGame = {type: Constants.events.type.NEW_GAME};
+  function newGame() {
+    return {type: Constants.events.type.NEW_GAME};
+  }
   
   exports.add = add;
   exports.get = get;
