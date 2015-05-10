@@ -254,7 +254,7 @@
    */
   function restart(config) {
     // destroy old game
-    Timer.cancel('onTimeChanged', []);
+    Timer.cancel();
     dbClear();
     
     // start new game
