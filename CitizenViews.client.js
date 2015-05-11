@@ -37,7 +37,15 @@
     Ui.item(function () {
       // the user
       Ui.avatar(Plugin.userAvatar(userId));
-      userName(userId, userData.isAlive);
+      
+      Dom.h2(function () {
+        Dom.style({
+          borderBottomStyle: 'none',
+          margin: '4px'
+        });
+        userName(userId, userData.isAlive);
+      });
+      
       
       // add role when the user is dead
       if (!userData.isAlive) {
@@ -49,7 +57,9 @@
           Dom.text(' was a ');
         });
         
-        RoleViews.name(userData.role);
+        Dom.h2(function () {
+          RoleViews.name(userData.role);
+        });
       }
     });
   }

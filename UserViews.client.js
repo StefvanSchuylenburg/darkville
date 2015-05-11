@@ -12,11 +12,11 @@
    * Shows the name of the user
    */
   function name(user) {
-    Dom.h2(function () {
+    Dom.span(function () {
       Dom.style({
-        borderBottomStyle: 'none',
         textTransform: 'initial',
-        margin: '4px'
+        color: '#888',
+        fontWeight: 'bold'
       });
       
       Dom.text(Plugin.userName(user));
