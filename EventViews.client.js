@@ -6,8 +6,12 @@
   
   var Dom = require('dom');
   var Db = require('db');
+  var Plugin = require('plugin');
+  var Ui = require('ui');
   
   var Constants = require('Constants')();
+  var UserViews = require('UserViews');
+  var RoleViews = require('RoleViews');
   
   /**
    * Gets the timeId of the time just before the given time.
@@ -27,7 +31,7 @@
       Dom.cls('eventView');
       Dom.style({
         backgroundColor: 'lightgray',
-        border: '3px solid gray',
+        border: '2px solid gray',
         display: 'block',
         padding: '1em',
         margin: '1em',
@@ -61,6 +65,44 @@
   }
   
   /**
+   * The event view for when someone has died
+   */
+  function death(event) {
+    // first determine how the player was killed
+    var murdered;
+    var causes = Constants.events.deathCauses;
+    switch (event.cause) {
+      case causes.LYNCHING:
+        murdered = 'lynched';
+        break;
+      case causes.WEREWOLVES:
+        murdered = 'murdered by the werewolves';
+        break;
+    }
+    var role = Db.shared.get('users', event.user, 'role');
+    
+    // and render the event
+    eventView(function () {
+      Dom.p(function () {
+        Dom.div(function () {
+          Dom.style({float: 'right'});
+          Ui.avatar(Plugin.userAvatar(event.user));
+        });
+        
+        // And the message
+        Dom.p(function () {
+          UserViews.name(event.user);
+          Dom.text(' has been ' + murdered + ". ");
+          Dom.br();
+          UserViews.name(event.user);
+          Dom.text(' used to be ');
+          RoleViews.name(role);
+        });
+      });
+    });
+  }
+  
+  /**
    * Renders a single event.
    */
   function renderEvent(event) {
@@ -69,7 +111,7 @@
         newGame();
         break;
       case Constants.events.type.DEATH:
-        // TODO
+        death(event);
         break;
     }
   }
