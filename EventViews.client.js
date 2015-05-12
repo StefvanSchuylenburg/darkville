@@ -35,7 +35,8 @@
         display: 'block',
         padding: '1em',
         margin: '1em',
-        fontFamily: 'cursive'
+        fontFamily: 'cursive',
+        textAlign: 'left'
       });
       
       content();
@@ -139,6 +140,52 @@
     });
   }
   
+  /**
+   * Small message that indicates the time for the overview
+   */
+  function timeMessage(timeString) {
+    Dom.div(function () {
+      Dom.style({
+        display: 'inline-block',
+        padding: '4px 6px',
+        borderRadius: '5px',
+        background: '#bbb'
+      });
+      Dom.text(timeString);
+    });
+  }
+  
+  /**
+   * Gives an overview of all the events that happened
+   */
+  function overview() {
+    var eventsDB = Db.shared.get('events');
+    
+    // getting the times, starting by most recent time
+    var times = Object.keys(eventsDB);
+    times.reverse();
+    
+    // and render for each day the time
+    Dom.div(function () {
+      Dom.style({
+        textAlign: 'center',
+        marginTop: '1em'
+      });
+      
+      times.forEach(function (time) {
+        // show what day it is
+        var timeString = time; // using ugly format atm
+        timeMessage(timeString);
+        
+        // display the events
+        var events = eventsDB[time];
+        events.reverse();
+        events.forEach(renderEvent);
+      });
+    });
+  }
+  
   exports.recent = recent;
+  exports.overview = overview;
   
 }());

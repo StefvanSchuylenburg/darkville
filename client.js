@@ -42,7 +42,6 @@
       
       // infoItem showing the current game time
       infoItem('Time', function () {
-        var now = new Date();
         var dayNight = time.isDay? 'Day': 'Night';
         var number = time.number;
         Dom.text(dayNight + ' ' + number);
@@ -116,6 +115,9 @@
     } else if (Page.state.get(0) === 'citizens') {
       // render citizen overview
       CitizenViews.overview();
+    } else if (Page.state.get(0) === 'events') {
+      // render the events overview
+      EventViews.overview();
     } else {
       // no special page: render home page
       renderHome();
