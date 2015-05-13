@@ -17,7 +17,7 @@
    */
   function userName(user, isAlive) {
     Dom.div(function () {
-      UserViews.name(user);
+      UserViews.bigName(user);
       
       if (!isAlive) { // the user is not alive
         Dom.style({
@@ -37,14 +37,7 @@
     Ui.item(function () {
       // the user
       Ui.avatar(Plugin.userAvatar(userId));
-      
-      Dom.h2(function () {
-        Dom.style({
-          borderBottomStyle: 'none',
-          margin: '4px'
-        });
-        userName(userId, userData.isAlive);
-      });
+      userName(userId, userData.isAlive);
       
       
       // add role when the user is dead
