@@ -8,6 +8,7 @@
   var Db = require('db');
   var Plugin = require('plugin');
   var Ui = require('ui');
+  var Page = require('page');
   
   var Constants = require('Constants')();
   var UserViews = require('UserViews');
@@ -118,6 +119,26 @@
   }
   
   /**
+   * Creates a link to an overview
+   */
+  function overviewLink(votingId) {
+    Dom.div(function () {
+      Dom.style({
+        color: Plugin.colors().highlight,
+        textAlign: 'right',
+        margin: '.5em'
+      });
+      
+      // on click to the right page
+      Dom.on('click', function () {
+        Page.nav(['events']);
+      });
+      
+      Dom.text('All events');
+    });
+  }
+  
+  /**
    * The main Event view.
    * Renders a few recent events and gives a link to the overview.
    */
@@ -138,6 +159,9 @@
     events.forEach(function (event) {
       renderEvent(event);
     });
+    
+    // and a link to the overview
+    overviewLink();
   }
   
   /**
