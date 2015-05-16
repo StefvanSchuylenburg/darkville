@@ -121,7 +121,7 @@
   /**
    * Creates a link to an overview
    */
-  function overviewLink(votingId) {
+  function overviewLink() {
     Dom.div(function () {
       Dom.style({
         color: Plugin.colors().highlight,
@@ -165,6 +165,26 @@
   }
   
   /**
+   * StartsWith function.
+   * Based on MDN's polyfill suggestion for String.prototype.startsWith
+   */
+  function startsWith(searchString) {
+    return searchString.lastIndexOf(searchString, 0) === 0;
+  }
+  
+  /**
+   * Creates a String representing the time of the given time id
+   */
+  function timeString(timeId) {
+    // WARNING: ugly way of getting a time representation
+    if (startsWith('day')) { // it is day
+      return 'Day ' + timeId.substring(3);
+    } else { // it is night
+      return 'Night ' + timeId.substring(5);
+    }
+  }
+  
+  /**
    * Small message that indicates the time for the overview
    */
   function timeMessage(timeString) {
@@ -198,8 +218,7 @@
       
       times.forEach(function (time) {
         // show what day it is
-        var timeString = time; // using ugly format atm
-        timeMessage(timeString);
+        timeMessage(timeString(time));
         
         // display the events
         var events = eventsDB[time];
