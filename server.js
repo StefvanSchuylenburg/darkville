@@ -207,7 +207,7 @@
       var prevTime = gameTime.previous(time);
       var target = mostVotes(prevTime.timeId);
       if (target) {
-        kill(target, prevTime, Constants.events.deathCause.LYNCHING);
+        kill(target, prevTime, Constants.events.deathCauses.LYNCHING);
       }
     }
     
@@ -221,29 +221,34 @@
    * Will be called when the day changes from night to day.
    * (or when a new game has been started)
    * @param the game time it was the last time this function was called
+   * @param startTime the time on which this game has started.
+   *  This is used to identify that the onTimeChanged is still used for the current game.
+   *  (Because Timer.cancel has hard time working when using arguments...)
    */
-  function onTimeChanged(lastTime) {
-    // getting the time
-    var now = new Date();
-    var time = gameTime.getTime(now);
-    
-    // starting new timer
-    var nextChange = time.nextChange;
-    var delay = nextChange.getTime() - now.getTime();
-    
-    Timer.set(delay, 'onTimeChanged', time);
-    
-    // update time in the database
-    Db.shared.set('time', 'gameTime', time);
-    
-    // calling startDay/startNight (only when the time is different)
-    if (!lastTime || lastTime.timeId !== time.timeId) {
-      // the time is different
-      // anounce the start of the day/night
-      if (time.isDay) {
-        startDay(time);
-      } else {
-        startNight(time);
+  function onTimeChanged(lastTime, startTime) {
+    if (startTime === Db.shared.get('time', 'start')) { // this is the current game
+      // getting the time
+      var now = new Date();
+      var time = gameTime.getTime(now);
+      
+      // starting new timer
+      var nextChange = time.nextChange;
+      var delay = nextChange.getTime() - now.getTime();
+      
+      Timer.set(delay, 'onTimeChanged', [time, startTime]);
+      
+      // update time in the database
+      Db.shared.set('time', 'gameTime', time);
+      
+      // calling startDay/startNight (only when the time is different)
+      if (!lastTime || lastTime.timeId !== time.timeId) {
+        // the time is different
+        // anounce the start of the day/night
+        if (time.isDay) {
+          startDay(time);
+        } else {
+          startNight(time);
+        }
       }
     }
   }
@@ -254,7 +259,6 @@
    */
   function restart(config) {
     // destroy old game
-    Timer.cancel();
     dbClear();
     
     // start new game
@@ -290,11 +294,20 @@
     // starting the timer and init the game time
     gameTime = GameTime.startingOn(now);
     var time = gameTime.getTime(new Date());
-    onTimeChanged(null);
+    
+    // start the first day and the timer for the following day/nights
+    var day0Time = {
+      isDay: true,
+      isNight: false,
+      number: 0,
+      nextChange: time.nextChange,
+      timeId: 'day0'
+    };
+    startDay(day0Time);
+    onTimeChanged(day0Time, now);
     
     // and update the time value in the database
     Db.shared.set('time', 'gameTime', time);
-    
     
     log('The game has been restarted');
   }
