@@ -249,6 +249,9 @@
         } else {
           startNight(time);
         }
+        
+        // and send the notifications
+        Events.sendNewTimeNotifications(time);
       }
     }
   }

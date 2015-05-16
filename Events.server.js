@@ -56,9 +56,18 @@
     return {type: Constants.events.type.NEW_GAME};
   }
   
+  /**
+   * Sends the notification for the new day/night.
+   * The notification is sent to all alive (or just died) users and includes who has died.
+   */
+  function sendNewTimeNotifications(time) {
+    
+  }
+  
   exports.add = add;
   exports.get = get;
   exports.death = death;
   exports.newGame = newGame;
+  exports.sendNewTimeNotifications = sendNewTimeNotifications;
   
 }());
