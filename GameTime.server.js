@@ -139,7 +139,14 @@
          /**
           * Gives an id that is unique for this isDay - number combination
           */
-         timeId: getTimeId(number, isDay)
+         timeId: getTimeId(number, isDay),
+         
+         /**
+          * Gets the time just before this time.
+          */
+         previous: function () {
+           return previous(this);
+         }
       };
     }
     
