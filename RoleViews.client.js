@@ -99,7 +99,15 @@
         );
       });
       
-      // TODO: add actions
+      actionBox(function () {
+        Dom.h3('Protect');
+        Dom.p(
+          'Select the citizen you want to protect. ' +
+          'You can not protect a single citizen twice in a row.'
+        );
+        
+        Ui.bigButton('Protect');
+      });
     });
   }
   
