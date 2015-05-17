@@ -91,7 +91,10 @@
         isNight: !isDay,
         number: number,
         nextChange: nextChange,
-        timeId: getTimeId(number, isDay)
+        timeId: getTimeId(number, isDay),
+        previous: function () {
+          return previous(this);
+        }
       };
     }
     
@@ -129,6 +132,8 @@
          * We start always in day 0 or night 0, depending on isDay
          */
          number: number,
+         
+         // TODO: use prototype for the following properties
          
          /**
           * Gets the date on which the next change from date to night or vice versa
