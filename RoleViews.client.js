@@ -100,13 +100,28 @@
       });
       
       actionBox(function () {
+        
+        // the text section
         Dom.h3('Protect');
         Dom.p(
           'Select the citizen you want to protect. ' +
           'You can not protect a single citizen twice in a row.'
         );
         
-        Ui.bigButton('Protect');
+        // the button
+        var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
+        if (time.isNight && isAlive) { // He can protect
+          Ui.bigButton('Protect');
+        } else {
+          // Show reason why he can not protect
+          Dom.div(function () {
+            Dom.style({color: 'red'});
+            if (!time.isNight) Dom.text('You can only protect people during the night.');
+            else if (!isAlive) Dom.text('You are dead; you can not stop the werewolves like this!');
+            
+            disabledButton('Protect');
+          });
+        }
       });
     });
   }
