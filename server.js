@@ -183,7 +183,7 @@
       var prevTime = gameTime.previous(time);
       var target = mostVotes(prevTime.timeId);
       if (target) {
-        kill(target, prevTime, Constants.events.deathCause.WEREWOLVES);
+        kill(target, prevTime, Constants.events.deathCauses.WEREWOLVES);
       }
       
       // start a new vote
