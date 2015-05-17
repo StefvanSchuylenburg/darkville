@@ -7,7 +7,8 @@
      roles: {
        CITIZEN: 'citizen',
        WEREWOLF: 'werewolf',
-       SEER: 'seer'
+       SEER: 'seer',
+       GUARDIAN: 'guardian'
      },
      events: {
        // the type of event we are handling

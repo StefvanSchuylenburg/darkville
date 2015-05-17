@@ -146,6 +146,13 @@
         value: 1
       });
       
+      // and the guardians
+      Dom.p('Number of guardians in the game:');
+      Form.input({
+        name: 'nGuardian',
+        value: 1
+      });
+      
       // restart button
       Form.check({
         name: 'restart',
