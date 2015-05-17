@@ -385,4 +385,25 @@
     
   };
   
+  /**
+   * Set the protection of the sender to the given user.
+   * The protection will be updated in the dabase and the selected user
+   * can not die by werewolf attacks.
+   * This will only work when the sender is a Guardian and the protection is allowed at this moment.
+   */
+  exports.client_protect = function(user) {
+    var time = gameTime.getTime(new Date());
+    // the user that wants to protect
+    var sender = Plugin.userId();
+    var isGuardian = Db.personal(sender).get('role') === Constants.roles.GUARDIAN;
+    
+    // check who he has protected the previous night
+    var prevNight = time.previous().previous();
+    var prevProtect = Db.personal(sender).get('protect', prevNight.timeId);
+    
+    if (time.isNight && isGuardian && prevProtect !== user) { // lets protect
+      Db.personal(sender).set('protect', time.timeId, user);
+    }
+  };
+  
 }());
