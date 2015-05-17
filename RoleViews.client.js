@@ -41,7 +41,7 @@
     Dom.div(function () {
       Dom.style({'background-color': '#A88698'});
       Dom.cls('big-button');
-      Dom.text('Investigate');
+      Dom.text(text);
     });
   }
   
