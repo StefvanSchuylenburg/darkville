@@ -9,6 +9,7 @@
   var Db = require('db');
   var Modal = require('modal');
   var Server = require('server');
+  var Obs = require('obs');
   
   var Constants = require('Constants')();
   var VotingViews = require('VotingViews');
@@ -87,6 +88,12 @@
   }
   
   function guardian(time) {
+    
+    /** Makes rpc call to protect the given user */
+    function protect(user) {
+      Server.call('protect', user);
+    }
+    
     description('Guardian', 'shield.png', function () {
       Dom.div(function () {
         Dom.p(
@@ -110,8 +117,20 @@
         
         // the button
         var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
-        if (time.isNight && isAlive) { // He can protect
-          Ui.bigButton('Protect');
+        if (time.isNight && isAlive) { // when can protect
+          
+          // get the users that are still alive
+          var users = UserViews.getUsers({isAlive: true});
+          // the user that we protected last time
+          var prevProtect = Db.personal.get('protect', 'night' + (time.number - 1));
+          // remove prevProtect from user
+          users = users.filter(function (user) {
+            return user !== prevProtect;
+          });
+          // and the user we may already have protected
+          var nowProtect = Db.personal.get('protect', time.timeId);
+          
+          Ui.bigButton('Protect', UserModal.bind(this, users, 'Protect', Obs.create(nowProtect), protect));
         } else {
           // Show reason why he can not protect
           Dom.div(function () {
