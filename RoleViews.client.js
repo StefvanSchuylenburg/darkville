@@ -229,6 +229,9 @@
       case Constants.roles.SEER:
         name('seer.png', 'Seer');
         break;
+      case Constants.roles.GUARDIAN:
+        name('shield.png', 'Guardian');
+        break;
     }
   }
   
