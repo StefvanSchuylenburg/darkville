@@ -16,6 +16,36 @@
   var UserViews = require('UserViews');
   
   /**
+   * A box as used for containing the possible abilities/actions.
+   * Similar to the box used for voting.
+   * @param content the content for within the box.
+   */
+  function actionBox(content) {
+    Dom.div(function () {
+      Dom.style({
+        'background-color': 'white',
+        'box-shadow': '0 2px rgba(0,0,0,.1)',
+        display: 'block',
+        padding: '1em'
+      });
+      
+      content();
+    });
+  }
+  
+  /**
+   * A button that is not usable.
+   * @param text the text on the button
+   */
+  function disabledButton(text) {
+    Dom.div(function () {
+      Dom.style({'background-color': '#A88698'});
+      Dom.cls('big-button');
+      Dom.text('Investigate');
+    });
+  }
+  
+  /**
    * Gives a description of a role.
    * @param name the name of the role
    * @param icon the name of the uri
@@ -53,6 +83,23 @@
       Dom.div(function () {
         content();
       });
+    });
+  }
+  
+  function guardian(time) {
+    description('Guardian', 'shield.png', function () {
+      Dom.div(function () {
+        Dom.p(
+          'You are a guardian, protector of the innocent. ' +
+          'Each night you can secretely protect one of the citizens ' +
+          'from the gruesome deeds of the werewolves.'
+        );
+        Dom.p(
+          'You win when all the werewolves are dead.'
+        );
+      });
+      
+      // TODO: add actions
     });
   }
   
@@ -100,13 +147,7 @@
         );
         
         // section to activate the seer power
-        Dom.div(function () {
-          Dom.style({
-            'background-color': 'white',
-            'box-shadow': '0 2px rgba(0,0,0,.1)',
-            display: 'block',
-            padding: '1em'
-          });
+        actionBox(function () {
           
           // the investigate button
           var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
@@ -125,11 +166,7 @@
               else if (hasInvestigated) Dom.text('You have already used this ability this night.');
             });
             
-            Dom.div(function () {
-              Dom.style({'background-color': '#A88698'});
-              Dom.cls('big-button');
-              Dom.text('Investigate');
-            });
+            disabledButton('Investigate');
           }
         });
       });
@@ -185,6 +222,9 @@
         break;
       case Constants.roles.SEER:
         seer(time);
+        break;
+      case Constants.roles.GUARDIAN:
+        guardian(time);
         break;
     }
   }
