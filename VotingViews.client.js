@@ -180,7 +180,7 @@
         
         // the user
         Ui.avatar(Plugin.userAvatar(userId));
-        UserViews.name(userId);
+        UserViews.bigName(userId);
         
         // check whether he has voted
         if (vote) {
@@ -194,7 +194,7 @@
           });
           
           // the player voted on
-          UserViews.name(vote);
+          UserViews.bigName(vote);
           Ui.avatar(Plugin.userAvatar(vote));
         } else {
           // small message saying he has not voted yet

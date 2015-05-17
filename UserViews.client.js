@@ -12,14 +12,29 @@
    * Shows the name of the user
    */
   function name(user) {
-    Dom.h2(function () {
+    Dom.span(function () {
       Dom.style({
-        borderBottomStyle: 'none',
         textTransform: 'initial',
-        margin: '4px'
+        color: '#999',
+        fontWeight: 'bold',
+        verticalAlign: 'center'
       });
       
       Dom.text(Plugin.userName(user));
+    });
+  }
+  
+  /**
+   * A version of name that uses a header to show the name.
+   * This one is bigger and does not fit in-line
+   */
+  function bigName(user) {
+    Dom.h2(function () {
+      Dom.style({
+        borderBottomStyle: 'none',
+        margin: '4px'
+      });
+      name(user);
     });
   }
   
@@ -43,6 +58,7 @@
   }
   
   exports.name = name;
+  exports.bigName = bigName;
   exports.getUsers = getUsers;
   
 }());

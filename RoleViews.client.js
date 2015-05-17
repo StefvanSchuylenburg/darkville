@@ -193,7 +193,7 @@
    * Renders the name with the image found and the given source and the given text.
    */
   function name(icon, text) {
-    Dom.h2(function () {
+    Dom.span(function () {
       Dom.style({
         borderBottomStyle: 'none',
         textTransform: 'initial',

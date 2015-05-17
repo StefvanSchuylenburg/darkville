@@ -42,7 +42,7 @@
           users.forEach(function (user) {
             Ui.item(function () {
               Ui.avatar(Plugin.userAvatar(user));
-              UserViews.name(user);
+              UserViews.bigName(user);
               
               // making the selected vote appear different
               if (user === selectedGet) {

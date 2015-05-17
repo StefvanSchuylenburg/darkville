@@ -8,6 +8,7 @@
   
   var Constants = require('Constants')();
   var GameTime = require('GameTime');
+  var Events = require('Events');
   
   // variables
   
@@ -99,11 +100,15 @@
    * Kills the given user.
    * The user is no longer alive and his role will be exposed.
    */
-  function kill(user) {
+  function kill(user, time, cause) {
     Db.shared.set('users', user, {
       isAlive: false,
       role: Db.personal(user).get('role')
     });
+    
+    // create event
+    var event = Events.death(user, cause);
+    Events.add(time, event);
   }
   
   /**
@@ -167,21 +172,22 @@
    * Closes the previous night and starts the new day.
    * @param number the current number of the day that just started
    */
-  function startDay(number) {
+  function startDay(time) {
     // message about the start of the day
-    log('Starting day ', number);
+    log('Starting day ', time.number);
     
-    if (number === 0) { // no voting on day 0
-      // TODO: send some message about first day and welcome and stuff
+    if (time.number === 0) { // no voting on day 0
+      Events.add(time, Events.newGame()); // create event for first day
     } else {
       // kill the player voted for by the werewolves
-      var target = mostVotes('night' + (number - 1));
+      var prevTime = gameTime.previous(time);
+      var target = mostVotes(prevTime.timeId);
       if (target) {
-        kill(target);
+        kill(target, prevTime, Constants.events.deathCauses.WEREWOLVES);
       }
       
       // start a new vote
-      var votingId = 'day' + number;
+      var votingId = time.timeId;
       var users = Plugin.userIds().filter(isAlive);
       createVoting(votingId, users);
     }
@@ -192,20 +198,21 @@
    * Closes the day and starts the night.
    * @param number the current number of the day
    */
-  function startNight(number) {
+  function startNight(time) {
     // message about start of the night
-    log('Starting night ', number);
+    log('Starting night ', time.number);
     
-    if (number > 0) { // if there was a day before, then finish the lynching
+    if (time.number > 0) { // if there was a day before, then finish the lynching
       // kill the player voted for (if there has been voted)
-      var target = mostVotes('day' + number);
+      var prevTime = gameTime.previous(time);
+      var target = mostVotes(prevTime.timeId);
       if (target) {
-        kill(target);
+        kill(target, prevTime, Constants.events.deathCauses.LYNCHING);
       }
     }
     
     // start a new vote
-    var votingId = 'night' + number;
+    var votingId = time.timeId;
     var werewolves = usersWithRole(Constants.roles.WEREWOLF);
     createVoting(votingId, werewolves.filter(isAlive));
   }
@@ -214,29 +221,37 @@
    * Will be called when the day changes from night to day.
    * (or when a new game has been started)
    * @param the game time it was the last time this function was called
+   * @param startTime the time on which this game has started.
+   *  This is used to identify that the onTimeChanged is still used for the current game.
+   *  (Because Timer.cancel has hard time working when using arguments...)
    */
-  function onTimeChanged(lastTime) {
-    // getting the time
-    var now = new Date();
-    var time = gameTime.getTime(now);
-    
-    // starting new timer
-    var nextChange = time.nextChange;
-    var delay = nextChange.getTime() - now.getTime();
-    
-    Timer.set(delay, 'onTimeChanged', time);
-    
-    // update time in the database
-    Db.shared.set('time', 'gameTime', time);
-    
-    // calling startDay/startNight (only when the time is different)
-    if (lastTime.timeId !== time.timeId) {
-      // the time is different
-      // anounce the start of the day/night
-      if (time.isDay) {
-        startDay(time.number);
-      } else {
-        startNight(time.number);
+  function onTimeChanged(lastTime, startTime) {
+    if (startTime === Db.shared.get('time', 'start')) { // this is the current game
+      // getting the time
+      var now = new Date();
+      var time = gameTime.getTime(now);
+      
+      // starting new timer
+      var nextChange = time.nextChange;
+      var delay = nextChange.getTime() - now.getTime();
+      
+      Timer.set(delay, 'onTimeChanged', [time, startTime]);
+      
+      // update time in the database
+      Db.shared.set('time', 'gameTime', time);
+      
+      // calling startDay/startNight (only when the time is different)
+      if (!lastTime || lastTime.timeId !== time.timeId) {
+        // the time is different
+        // anounce the start of the day/night
+        if (time.isDay) {
+          startDay(time);
+        } else {
+          startNight(time);
+        }
+        
+        // and send the notifications
+        Events.sendNewTimeNotifications(time);
       }
     }
   }
@@ -247,7 +262,6 @@
    */
   function restart(config) {
     // destroy old game
-    Timer.cancel('onTimeChanged');
     dbClear();
     
     // start new game
@@ -283,11 +297,20 @@
     // starting the timer and init the game time
     gameTime = GameTime.startingOn(now);
     var time = gameTime.getTime(new Date());
-    onTimeChanged(time);
+    
+    // start the first day and the timer for the following day/nights
+    var day0Time = {
+      isDay: true,
+      isNight: false,
+      number: 0,
+      nextChange: time.nextChange,
+      timeId: 'day0'
+    };
+    startDay(day0Time);
+    onTimeChanged(day0Time, now);
     
     // and update the time value in the database
     Db.shared.set('time', 'gameTime', time);
-    
     
     log('The game has been restarted');
   }

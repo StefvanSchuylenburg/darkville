@@ -17,7 +17,7 @@
    */
   function userName(user, isAlive) {
     Dom.div(function () {
-      UserViews.name(user);
+      UserViews.bigName(user);
       
       if (!isAlive) { // the user is not alive
         Dom.style({
@@ -39,6 +39,7 @@
       Ui.avatar(Plugin.userAvatar(userId));
       userName(userId, userData.isAlive);
       
+      
       // add role when the user is dead
       if (!userData.isAlive) {
         Dom.span(function () {
@@ -49,7 +50,9 @@
           Dom.text(' was a ');
         });
         
-        RoleViews.name(userData.role);
+        Dom.h2(function () {
+          RoleViews.name(userData.role);
+        });
       }
     });
   }
