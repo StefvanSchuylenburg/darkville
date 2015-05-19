@@ -79,6 +79,30 @@
   }
   
   /**
+   * Determines whether the given user is protected by a Guardian.
+   * @param protectedUser the user who should be protected
+   * @param time when the user is protected
+   */
+  function isProtected(protectedUser, time) {
+    var users = Plugin.userIds();
+    
+    // find someone protecting the user
+    var guardian = users.find(function (user) {
+      var obj = Db.personal(user).get();
+      if (obj.role === Constants.roles.GUARDIAN && obj.protect) {
+        // we have a guardian that is protecting someone
+        return obj.protect[time.timeId] == protectedUser;
+      } else {
+        // nope, he can not protect him.
+        return false;
+      }
+    });
+    
+    // guardian should be defined if protectedUser is protected
+    return guardian !== undefined;
+  }
+  
+  /**
    * Determines whether the given user is alive.
    * This is used in filters to find the correct users
    */
@@ -182,7 +206,8 @@
       // kill the player voted for by the werewolves
       var prevTime = gameTime.previous(time);
       var target = mostVotes(prevTime.timeId);
-      if (target) {
+      if (target && !isProtected(target)) {
+        // there is a target selected that is not protected
         kill(target, prevTime, Constants.events.deathCauses.WEREWOLVES);
       }
       
