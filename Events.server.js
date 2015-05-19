@@ -66,7 +66,7 @@
   function contains(arr, e) {
     var i = arr.length;
     while (i--) {
-       if (arr[i] === e) {
+       if (arr[i] == e) {
            return true;
        }
     }
