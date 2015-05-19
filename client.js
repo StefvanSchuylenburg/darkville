@@ -140,7 +140,7 @@
       });
       
       // the setting for the number of seer
-      Dom.p('Number of seers in the game:');
+      Dom.p('Number of watchers in the game:');
       Form.input({
         name: 'nSeer',
         value: 1

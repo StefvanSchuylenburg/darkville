@@ -176,10 +176,10 @@
       });
     }
     
-    description('Seer', 'seer.png', function () {
+    description('Watcher', 'seer.png', function () {
       Dom.div(function () {
         Dom.p(
-          'You are a seer. ' +
+          'You are a watcher. ' +
           'You can see straight through how people appear ' +
           'to discover who they really are. ' +
           'Each night you can investigate one person to find their true role.'
@@ -204,7 +204,7 @@
             Dom.div(function () {
               Dom.style({color: 'red'});
               if (!time.isNight) Dom.text('You can only investigate people during the night.');
-              else if (!isAlive) Dom.text('You are dead; your seer power is useless now!');
+              else if (!isAlive) Dom.text('You are dead; your investigate power is useless now!');
               else if (hasInvestigated) Dom.text('You have already used this ability this night.');
             });
             
@@ -309,7 +309,7 @@
         name('wolf.png', 'Werewolf');
         break;
       case Constants.roles.SEER:
-        name('seer.png', 'Seer');
+        name('seer.png', 'Watcher');
         break;
       case Constants.roles.GUARDIAN:
         name('shield.png', 'Guardian');
