@@ -87,7 +87,7 @@
     var users = Plugin.userIds();
     
     // find someone protecting the user
-    var guardian = users.find(function (user) {
+    var guardians = users.filter(function (user) {
       var obj = Db.personal(user).get();
       if (obj.role === Constants.roles.GUARDIAN && obj.protect) {
         // we have a guardian that is protecting someone
@@ -98,8 +98,8 @@
       }
     });
     
-    // guardian should be defined if protectedUser is protected
-    return guardian !== undefined;
+    // there are guardians that are protecting the user
+    return guardians.length > 0;
   }
   
   /**
@@ -206,7 +206,8 @@
       // kill the player voted for by the werewolves
       var prevTime = gameTime.previous(time);
       var target = mostVotes(prevTime.timeId);
-      if (target && !isProtected(target)) {
+      
+      if (target && !isProtected(target, prevTime)) {
         // there is a target selected that is not protected
         kill(target, prevTime, Constants.events.deathCauses.WEREWOLVES);
       }
