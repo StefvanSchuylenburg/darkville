@@ -167,9 +167,10 @@
   /**
    * StartsWith function.
    * Based on MDN's polyfill suggestion for String.prototype.startsWith
+   * @returns true iff string starts with prefix
    */
-  function startsWith(searchString) {
-    return searchString.lastIndexOf(searchString, 0) === 0;
+  function startsWith(string, prefix) {
+    return string.lastIndexOf(prefix, 0) === 0;
   }
   
   /**
@@ -177,7 +178,7 @@
    */
   function timeString(timeId) {
     // WARNING: ugly way of getting a time representation
-    if (startsWith('day')) { // it is day
+    if (startsWith(timeId, 'day')) { // it is day
       return 'Day ' + timeId.substring(3);
     } else { // it is night
       return 'Night ' + timeId.substring(5);
