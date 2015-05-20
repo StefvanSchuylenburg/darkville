@@ -51,6 +51,9 @@
         });
         
         Dom.h2(function () {
+          Dom.style({
+            borderBottomStyle: 'none'
+          });
           RoleViews.name(userData.role);
         });
       }

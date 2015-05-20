@@ -277,7 +277,6 @@
   function name(icon, text) {
     Dom.span(function () {
       Dom.style({
-        borderBottomStyle: 'none',
         textTransform: 'initial',
         margin: '4px',
         color: Plugin.colors().highlight
