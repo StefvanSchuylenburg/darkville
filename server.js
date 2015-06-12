@@ -398,7 +398,7 @@
     // check whether he has investigated yet
     var investigated = Db.personal(sender).get('investigate', time.timeId);
     
-    if (/*time.isNight && */isSeer && !investigated) { // the user may ask for the role
+    if (time.isNight && isSeer && !investigated) { // the user may ask for the role
       // get the role from the user
       var role = Db.personal(user).get('role');
       
