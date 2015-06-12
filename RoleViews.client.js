@@ -151,29 +151,7 @@
      */
     function investigate(user) {
       // ask the server for the role
-      Server.call('investigateRole', user, function (role) {
-        // when the server has returned
-        Modal.show('Investigate ', function () {
-          if (role) { // the role is found
-            Ui.item(function () {
-              Ui.avatar(Plugin.userAvatar(user));
-              UserViews.name(user);
-              
-              Dom.span(function () {
-                Dom.style({
-                  margin: '1em',
-                  color: '#AAA'
-                });
-                Dom.text(' is a ');
-              });
-              
-              nameOf(role);
-            });
-          } else { // the role could not be retrieved
-            Dom.text('The role could not be found!');
-          }
-        });
-      });
+      Server.call('investigateRole', user);
     }
     
     description('Watcher', 'seer.png', function () {
@@ -190,6 +168,10 @@
         
         // section to activate the seer power
         actionBox(function () {
+          
+          // some explanation
+          Dom.p('Select who you want to investigate.' +
+            'You will be able to see his role during the next day.');
           
           // the investigate button
           var isAlive = Db.shared.get('users', Plugin.userId(), 'isAlive');
@@ -209,6 +191,43 @@
             });
             
             disabledButton('Investigate');
+          }
+          
+          // display the role of the user selected in the previous night
+          if (time.isDay && time.number > 0) {
+            // get the id of the previous night
+            var prevTimeId = 'night' + (time.number - 1);
+            
+            // get the investigation
+            var investigated = Db.personal.get('investigate', prevTimeId);
+            
+            if (investigated) { // we have investigated last night
+              // show what his role was
+              Ui.item(function () {
+                Ui.avatar(Plugin.userAvatar(investigated.user));
+                UserViews.name(investigated.user)
+                
+                Dom.span(function () {
+                  Dom.style({
+                    margin: '1em',
+                    color: '#AAA'
+                  });
+                  Dom.text(' is a ');
+                });
+                
+                nameOf(investigated.role);
+              });
+            } else { // no one has been investigated
+              Ui.item(function () {
+                Dom.span(function () {
+                  Dom.style({
+                    margin: '1em',
+                    color: '#AAA'
+                  });
+                  Dom.text('You did not investigate anyone last night!');
+                });
+              });
+            }
           }
         });
       });

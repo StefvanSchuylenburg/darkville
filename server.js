@@ -383,13 +383,13 @@
   };
   
   /**
-   * Returns the role of the given user through the callback.
-   * The role can only be gotten when the requesting user is a seer
-   * and when he has not investigated in this night yet.
-   * Gives null when the requesting user is not allowed to view the role
-   * or when the role is not available.
+   * Makes the role of the given visible for the seer.
+   * The investigation will be updated in the database and the
+   * seer can view in the database what the role was of his selected user.
+   * This may only be selected once a night and only when the sender is
+   * a seer and is alive.
    */
-  exports.client_investigateRole = function (user, callback) {
+  exports.client_investigateRole = function (user) {
     var time = gameTime.getTime(new Date());
     // the user that requested the investigate
     var sender = Plugin.userId();
@@ -398,15 +398,15 @@
     // check whether he has investigated yet
     var investigated = Db.personal(sender).get('investigate', time.timeId);
     
-    if (time.isNight && isSeer && !investigated) { // the user may ask for the role
+    if (/*time.isNight && */isSeer && !investigated) { // the user may ask for the role
       // get the role from the user
       var role = Db.personal(user).get('role');
       
       // mark as investigated and sent reply
-      Db.personal(sender).set('investigate', time.timeId, user);
-      callback.reply(role);
-    } else { // not allowed
-      callback.reply(null);
+      Db.personal(sender).set('investigate', time.timeId, {
+        user: user,
+        role: role
+      });
     }
     
   };
